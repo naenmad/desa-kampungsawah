@@ -13,26 +13,26 @@ export default function AdministrasiPelayananPage() {
   const [selectedSurat, setSelectedSurat] = useState("");
 
   const jenisSurat = [
-    { 
-      id: "sku", 
+    {
+      id: "sku",
       name: "Surat Keterangan Usaha (SKU)",
       description: "Untuk warga pelaku UMKM konveksi dompet, kuliner kue basah, atau dagang lainnya.",
       requirements: "KTP asli, Kartu Keluarga (KK), Foto tempat/produk usaha, Pengantar RT/RW."
     },
-    { 
-      id: "sktm", 
+    {
+      id: "sktm",
       name: "Surat Keterangan Tidak Mampu (SKTM)",
       description: "Untuk keperluan keringanan biaya sekolah, jaminan kesehatan, atau bantuan sosial.",
       requirements: "KTP asli, Kartu Keluarga (KK), Surat Pengantar RT/RW yang ditandatangani, Foto rumah tampak depan."
     },
-    { 
-      id: "domisili", 
+    {
+      id: "domisili",
       name: "Surat Keterangan Domisili Penduduk",
       description: "Untuk menerangkan domisili tinggal saat ini di wilayah Desa Kampungsawah.",
       requirements: "KTP asli, Kartu Keluarga (KK), Surat Pengantar RT/RW."
     },
-    { 
-      id: "skck", 
+    {
+      id: "skck",
       name: "Surat Pengantar SKCK",
       description: "Surat rekomendasi pengantar untuk pembuatan SKCK di Polsek Jayakerta.",
       requirements: "KTP asli, Kartu Keluarga (KK), Surat Pengantar RT/RW."
@@ -53,10 +53,10 @@ export default function AdministrasiPelayananPage() {
 
   return (
     <div className="space-y-16 pb-20 bg-white">
-      
+
       {/* 1. HERO SECTION WITH BACKGROUND IMAGE */}
       <section className="relative min-h-[450px] flex items-center text-white px-4 overflow-hidden bg-emerald-950">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 hover:scale-105"
           style={{ backgroundImage: "url('/images/background.webp')" }}
         />
@@ -100,7 +100,7 @@ export default function AdministrasiPelayananPage() {
       {/* 2. FORMULIR UTAMA */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-white relative z-20 -mt-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Left Column: Form Panel */}
           <div className="lg:col-span-8 bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-10">
             {!formSubmitted ? (
@@ -112,12 +112,12 @@ export default function AdministrasiPelayananPage() {
 
                 {/* Grid Form Input */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  
+
                   {/* Pilihan Surat */}
                   <div className="md:col-span-2">
-                    <Select 
+                    <Select
                       label="Jenis Layanan Surat"
-                      required 
+                      required
                       value={selectedSurat}
                       onChange={(e) => setSelectedSurat(e.target.value)}
                     >
@@ -129,21 +129,21 @@ export default function AdministrasiPelayananPage() {
                   </div>
 
                   {/* Nama Lengkap */}
-                  <Input 
+                  <Input
                     label="Nama Lengkap"
-                    type="text" 
-                    required 
-                    placeholder="Masukkan nama sesuai KTP" 
+                    type="text"
+                    required
+                    placeholder="Masukkan nama sesuai KTP"
                     icon={<User className="h-4 w-4 text-gray-400" />}
                   />
 
                   {/* NIK */}
-                  <Input 
+                  <Input
                     label="Nomor Induk Kependudukan (NIK)"
-                    type="text" 
-                    required 
-                    maxLength={16} 
-                    placeholder="16 digit NIK Anda" 
+                    type="text"
+                    required
+                    maxLength={16}
+                    placeholder="16 digit NIK Anda"
                     icon={<CreditCard className="h-4 w-4 text-gray-400" />}
                   />
 
@@ -157,33 +157,33 @@ export default function AdministrasiPelayananPage() {
 
                   {/* RT / RW */}
                   <div className="grid grid-cols-2 gap-4">
-                    <Input 
+                    <Input
                       label="RT"
-                      type="number" 
-                      required 
-                      min={1} 
-                      max={12} 
-                      placeholder="1 - 12" 
-                      className="text-center" 
+                      type="number"
+                      required
+                      min={1}
+                      max={12}
+                      placeholder="1 - 12"
+                      className="text-center"
                     />
-                    <Input 
+                    <Input
                       label="RW"
-                      type="number" 
-                      required 
-                      min={1} 
-                      max={4} 
-                      placeholder="1 - 4" 
-                      className="text-center" 
+                      type="number"
+                      required
+                      min={1}
+                      max={4}
+                      placeholder="1 - 4"
+                      className="text-center"
                     />
                   </div>
 
                   {/* Keperluan Berkas */}
                   <div className="md:col-span-2">
-                    <TextArea 
+                    <TextArea
                       label="Alasan / Keperluan Keterangan Surat"
-                      required 
-                      rows={4} 
-                      placeholder="Contoh: Digunakan sebagai syarat pengajuan modal usaha UMKM konveksi dompet." 
+                      required
+                      rows={4}
+                      placeholder="Contoh: Digunakan sebagai syarat pengajuan modal usaha UMKM konveksi dompet."
                     />
                   </div>
 
@@ -191,8 +191,8 @@ export default function AdministrasiPelayananPage() {
 
                 {/* Tombol Kirim Form */}
                 <div className="pt-4">
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     className="w-full bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-xl hover:bg-emerald-700 transition-all shadow-md shadow-emerald-700/20 flex items-center justify-center space-x-2 group cursor-pointer"
                   >
                     <span>Kirim Permohonan Surat</span>
@@ -220,17 +220,17 @@ export default function AdministrasiPelayananPage() {
                 </div>
 
                 <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
-                  <Link 
-                    href="/layanan/pengaduan" 
+                  <Link
+                    href="/layanan/pengaduan"
                     className="bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl text-sm hover:bg-emerald-700 transition-colors shadow-sm text-center flex items-center justify-center"
                   >
                     Lacak Status & Pengaduan
                   </Link>
-                  <button 
+                  <button
                     onClick={() => {
                       setFormSubmitted(false);
                       setSelectedSurat("");
-                    }} 
+                    }}
                     className="text-gray-600 hover:text-gray-900 font-semibold text-sm py-3 px-6 transition-colors cursor-pointer"
                   >
                     Buat Surat Baru
@@ -248,7 +248,7 @@ export default function AdministrasiPelayananPage() {
                 <Info className="w-5 h-5 text-emerald-600 mr-2 shrink-0" />
                 <span>Persyaratan Berkas</span>
               </h3>
-              
+
               {currentSuratDetail ? (
                 <div className="space-y-4">
                   <div className="space-y-1">
@@ -281,8 +281,8 @@ export default function AdministrasiPelayananPage() {
             <Card className="p-6 bg-emerald-950 text-emerald-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-900 rounded-full -mr-8 -mt-8 opacity-40" />
               <div className="space-y-3 relative z-10">
-                <h4 className="font-bold text-white text-base">Ketentuan Layanan</h4>
-                <ul className="list-disc pl-4 text-xs space-y-2 text-emerald-200/90 leading-relaxed">
+                <h4 className="font-bold text-gray-800 text-base">Ketentuan Layanan</h4>
+                <ul className="list-disc pl-4 text-xs space-y-2 text-gray-600 leading-relaxed">
                   <li>Pelayanan digital ini <strong>100% gratis</strong> tanpa biaya administrasi (pungutan liar).</li>
                   <li>Lama proses verifikasi berkas rata-rata memakan waktu <strong>1x24 jam</strong> sejak pengajuan dikirim.</li>
                   <li>Pengambilan surat fisik harus membawa fotokopi KTP/KK serta surat pengantar RT/RW asli ke Kantor Desa.</li>
