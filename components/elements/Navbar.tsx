@@ -11,7 +11,15 @@ export default function Navbar() {
   // Struktur menu yang baru dengan dukungan dropdown
   const menuItems = [
     { name: "Beranda", href: "/" },
-    { name: "Profil Desa", href: "/profil" },
+    {
+      name: "Profil Desa",
+      dropdown: [
+        { name: "Berita Terkini", href: "/berita-terkini" },
+        { name: "Data Penduduk", href: "/data-penduduk" },
+        { name: "Sejarah", href: "/sejarah" },
+        { name: "Struktur Perangkat", href: "/struktur-perangkat" },
+      ]
+    },
     {
       name: "Informasi Publik",
       dropdown: [

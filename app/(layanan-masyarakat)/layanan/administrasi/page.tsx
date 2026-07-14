@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FileText, ShieldCheck, ArrowRight, User, CreditCard, HelpCircle, AlertCircle, Info } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import { Input, TextArea, Select } from "@/components/ui/Input";
 
 export default function AdministrasiPelayananPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -113,95 +114,76 @@ export default function AdministrasiPelayananPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   
                   {/* Pilihan Surat */}
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Jenis Layanan Surat</label>
-                    <select 
+                  <div className="md:col-span-2">
+                    <Select 
+                      label="Jenis Layanan Surat"
                       required 
                       value={selectedSurat}
                       onChange={(e) => setSelectedSurat(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
                     >
                       <option value="">-- Pilih Format Surat --</option>
                       {jenisSurat.map((surat) => (
                         <option key={surat.id} value={surat.id}>{surat.name}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Nama Lengkap */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Nama Lengkap</label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-3.5 h-4 w-4 text-gray-400" />
-                      <input 
-                        type="text" 
-                        required 
-                        placeholder="Masukkan nama sesuai KTP" 
-                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50" 
-                      />
-                    </div>
-                  </div>
+                  <Input 
+                    label="Nama Lengkap"
+                    type="text" 
+                    required 
+                    placeholder="Masukkan nama sesuai KTP" 
+                    icon={<User className="h-4 w-4 text-gray-400" />}
+                  />
 
                   {/* NIK */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Nomor Induk Kependudukan (NIK)</label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-4 top-3.5 h-4 w-4 text-gray-400" />
-                      <input 
-                        type="text" 
-                        required 
-                        maxLength={16} 
-                        placeholder="16 digit NIK Anda" 
-                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50" 
-                      />
-                    </div>
-                  </div>
+                  <Input 
+                    label="Nomor Induk Kependudukan (NIK)"
+                    type="text" 
+                    required 
+                    maxLength={16} 
+                    placeholder="16 digit NIK Anda" 
+                    icon={<CreditCard className="h-4 w-4 text-gray-400" />}
+                  />
 
                   {/* Wilayah Dusun */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Wilayah Dusun asal tinggal</label>
-                    <select required className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50">
-                      <option value="">-- Pilih Dusun Asal --</option>
-                      {dusunList.map((dusun, idx) => (
-                        <option key={idx} value={dusun.toLowerCase()}>Dusun {dusun}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select label="Wilayah Dusun asal tinggal" required>
+                    <option value="">-- Pilih Dusun Asal --</option>
+                    {dusunList.map((dusun, idx) => (
+                      <option key={idx} value={dusun.toLowerCase()}>Dusun {dusun}</option>
+                    ))}
+                  </Select>
 
                   {/* RT / RW */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block text-center">RT</label>
-                      <input 
-                        type="number" 
-                        required 
-                        min={1} 
-                        max={12} 
-                        placeholder="1 - 12" 
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50 text-center" 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block text-center">RW</label>
-                      <input 
-                        type="number" 
-                        required 
-                        min={1} 
-                        max={4} 
-                        placeholder="1 - 4" 
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50 text-center" 
-                      />
-                    </div>
+                    <Input 
+                      label="RT"
+                      type="number" 
+                      required 
+                      min={1} 
+                      max={12} 
+                      placeholder="1 - 12" 
+                      className="text-center" 
+                    />
+                    <Input 
+                      label="RW"
+                      type="number" 
+                      required 
+                      min={1} 
+                      max={4} 
+                      placeholder="1 - 4" 
+                      className="text-center" 
+                    />
                   </div>
 
                   {/* Keperluan Berkas */}
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Alasan / Keperluan Keterangan Surat</label>
-                    <textarea 
+                  <div className="md:col-span-2">
+                    <TextArea 
+                      label="Alasan / Keperluan Keterangan Surat"
                       required 
                       rows={4} 
                       placeholder="Contoh: Digunakan sebagai syarat pengajuan modal usaha UMKM konveksi dompet." 
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50" 
                     />
                   </div>
 

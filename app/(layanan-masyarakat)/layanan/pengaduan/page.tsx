@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MessageSquare, Shield, Send, Search, CheckCircle, Clock, AlertTriangle, UserCheck } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import { Input, TextArea, Select } from "@/components/ui/Input";
 
 type ComplaintStatus = "diterima" | "verifikasi" | "proses" | "selesai";
 
@@ -194,70 +195,58 @@ export default function PengaduanMasyarakatPage() {
 
                 <div className="space-y-4">
                   {/* Pilihan Kategori */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Kategori Aduan</label>
-                    <select
-                      required
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
-                    >
-                      <option value="">-- Pilih Kategori Masalah --</option>
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Kategori Aduan"
+                    required
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option value="">-- Pilih Kategori Masalah --</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </Select>
 
                   {/* Judul Laporan */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Subjek / Judul Laporan</label>
-                    <input
-                      type="text"
-                      required
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Tuliskan judul laporan singkat (contoh: Pintu air tersumbat)"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
-                    />
-                  </div>
+                  <Input
+                    label="Subjek / Judul Laporan"
+                    type="text"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Tuliskan judul laporan singkat (contoh: Pintu air tersumbat)"
+                  />
 
                   {/* Deskripsi Laporan */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Isi Detail Pengaduan</label>
-                    <textarea
-                      required
-                      rows={5}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Jelaskan secara rinci kronologi masalah, perkiraan lokasi, dampak, dan detail lainnya..."
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
-                    />
-                  </div>
+                  <TextArea
+                    label="Isi Detail Pengaduan"
+                    required
+                    rows={5}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Jelaskan secara rinci kronologi masalah, perkiraan lokasi, dampak, dan detail lainnya..."
+                  />
 
                   {/* Wilayah Dusun & Upload Image Sim */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Lokasi Dusun Masalah</label>
-                      <select
-                        required
-                        value={dusun}
-                        onChange={(e) => setDusun(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
-                      >
-                        <option value="">-- Pilih Dusun Terkait --</option>
-                        {dusunList.map((d, idx) => (
-                          <option key={idx} value={d.toLowerCase()}>Dusun {d}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <Select
+                      label="Lokasi Dusun Masalah"
+                      required
+                      value={dusun}
+                      onChange={(e) => setDusun(e.target.value)}
+                    >
+                      <option value="">-- Pilih Dusun Terkait --</option>
+                      {dusunList.map((d, idx) => (
+                        <option key={idx} value={d.toLowerCase()}>Dusun {d}</option>
+                      ))}
+                    </Select>
 
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 w-full text-left">
                       <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Unggah Foto Bukti (Opsional)</label>
                       <input
                         type="file"
                         accept="image/*"
-                        className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl bg-gray-50/50 text-gray-400 focus:outline-none cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                        className="w-full px-3 py-2 text-xs border border-gray-200 rounded-xl bg-gray-50/50 text-gray-900 focus:outline-none cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
                       />
                     </div>
                   </div>
@@ -279,28 +268,22 @@ export default function PengaduanMasyarakatPage() {
                   {/* Identitas Pelapor (Render jika tidak anonim) */}
                   {!isAnonymous && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">Nama Pelapor</label>
-                        <input
-                          type="text"
-                          required={!isAnonymous}
-                          value={reporterName}
-                          onChange={(e) => setReporterName(e.target.value)}
-                          placeholder="Masukkan nama lengkap Anda"
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block">No. WhatsApp / Kontak</label>
-                        <input
-                          type="tel"
-                          required={!isAnonymous}
-                          value={whatsapp}
-                          onChange={(e) => setWhatsapp(e.target.value)}
-                          placeholder="0812xxxxxx (Untuk update status)"
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50"
-                        />
-                      </div>
+                      <Input
+                        label="Nama Pelapor"
+                        type="text"
+                        required={!isAnonymous}
+                        value={reporterName}
+                        onChange={(e) => setReporterName(e.target.value)}
+                        placeholder="Masukkan nama lengkap Anda"
+                      />
+                      <Input
+                        label="No. WhatsApp / Kontak"
+                        type="tel"
+                        required={!isAnonymous}
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="0812xxxxxx (Untuk update status)"
+                      />
                     </div>
                   )}
 
@@ -371,18 +354,20 @@ export default function PengaduanMasyarakatPage() {
               </div>
 
               {/* Form Lacak */}
-              <form onSubmit={handleSearch} className="flex gap-2">
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: ADU-102938"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-grow px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 text-sm bg-gray-50/50 font-mono text-center tracking-wider"
-                />
+              <form onSubmit={handleSearch} className="flex gap-2 items-end w-full">
+                <div className="flex-grow">
+                  <Input
+                    type="text"
+                    required
+                    placeholder="Contoh: ADU-102938"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="font-mono text-center tracking-wider"
+                  />
+                </div>
                 <button
                   type="submit"
-                  className="bg-emerald-600 text-white px-4 py-3 rounded-xl hover:bg-emerald-700 transition-all font-bold text-xs flex items-center cursor-pointer"
+                  className="bg-emerald-600 text-white px-4 py-3 h-[46px] rounded-xl hover:bg-emerald-700 transition-all font-bold text-xs flex items-center shrink-0 cursor-pointer"
                 >
                   <Search className="w-4 h-4 mr-1 shrink-0" />
                   <span>Cari</span>

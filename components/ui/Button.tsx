@@ -41,22 +41,23 @@ function getButtonClasses(variant: ButtonVariant, size: ButtonSize, className?: 
 }
 
 export default function Button(props: ButtonProps) {
-	const { children, variant = "primary", size = "md", className } = props;
+	// 1. Ekstrak property styling di sini agar tidak ikut masuk ke restProps
+	const { children, variant = "primary", size = "md", className, ...restProps } = props;
 	const buttonClasses = getButtonClasses(variant, size, className);
 
 	if ("href" in props) {
-		const { href, ...rest } = props;
-		const linkHref = href as string;
-		const linkProps = rest as Omit<ComponentPropsWithoutRef<typeof Link>, "href" | "className" | "children">;
+		// 2. Sekarang restProps sudah bersih dari className
+		const { href, ...linkProps } = restProps as { href: string;[key: string]: any };
 
 		return (
-			<Link href={linkHref} className={buttonClasses} {...linkProps}>
+			<Link href={href} className={buttonClasses} {...linkProps}>
 				{children}
 			</Link>
 		);
 	}
 
-	const { type = "button", ...buttonProps } = props;
+	// Sama halnya dengan button biasa
+	const { type = "button", ...buttonProps } = restProps as ComponentPropsWithoutRef<"button">;
 
 	return (
 		<button type={type} className={buttonClasses} {...buttonProps}>
