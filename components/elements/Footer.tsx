@@ -36,16 +36,16 @@ export default function Footer() {
           </h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/profil" className="hover:text-emerald-400 transition-colors">Profil & Sejarah Desa</Link>
+              <Link href="/sejarah" className="hover:text-emerald-400 transition-colors">Profil & Sejarah Desa</Link>
             </li>
             <li>
-              <Link href="/berita" className="hover:text-emerald-400 transition-colors">Kabar & Berita Desa</Link>
+              <Link href="/berita-terkini" className="hover:text-emerald-400 transition-colors">Kabar & Berita Desa</Link>
             </li>
             <li>
-              <Link href="/pengajuan" className="hover:text-emerald-400 transition-colors">Sistem Layanan Surat</Link>
+              <Link href="/layanan/administrasi" className="hover:text-emerald-400 transition-colors">Sistem Layanan Surat</Link>
             </li>
             <li>
-              <Link href="/admin" className="hover:text-emerald-400 transition-colors">Dashboard Kontributor</Link>
+              <Link href="/login" className="hover:text-emerald-400 transition-colors">Portal Admin</Link>
             </li>
           </ul>
         </div>
