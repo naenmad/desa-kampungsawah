@@ -7,7 +7,6 @@ import { Menu, X, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  // Tambahan state khusus untuk melacak dropdown mobile yang sedang aktif
   const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
 
   const menuItems = [
@@ -39,12 +38,11 @@ export default function Navbar() {
     { name: "Kontak", href: "/kontak" },
   ];
 
-  // Fungsi toggle menu mobile
   const toggleMobileDropdown = (menuName: string) => {
     if (activeMobileMenu === menuName) {
-      setActiveMobileMenu(null); // Tutup jika diklik lagi
+      setActiveMobileMenu(null);
     } else {
-      setActiveMobileMenu(menuName); // Buka menu yang diklik
+      setActiveMobileMenu(menuName);
     }
   };
 
@@ -73,7 +71,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Menu (Tetap Pakai Hover) */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {menuItems.map((item) =>
               item.dropdown ? (
@@ -125,13 +123,16 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Panel (Dengan Accordion) */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-1 shadow-inner max-h-[85vh] overflow-y-auto">
+      {/* Mobile Menu Panel (Sekarang pakai efek smooth slide-down) */}
+      <div
+        className={`md:hidden bg-white overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[85vh] opacity-100 border-t border-gray-100 shadow-inner" : "max-h-0 opacity-0"
+          }`}
+      >
+        {/* Inner container untuk padding agar tidak bocor saat max-height 0 */}
+        <div className="px-4 pt-2 pb-6 space-y-1 overflow-y-auto">
           {menuItems.map((item) =>
             item.dropdown ? (
               <div key={item.name} className="py-1">
-                {/* Tombol Accordion */}
                 <button
                   onClick={() => toggleMobileDropdown(item.name)}
                   className="w-full flex items-center justify-between px-3 py-2 text-base font-semibold text-gray-800 rounded-md hover:bg-gray-50 transition-colors"
@@ -143,7 +144,6 @@ export default function Navbar() {
                   />
                 </button>
 
-                {/* Isi Dropdown dengan efek tinggi (max-height) */}
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${activeMobileMenu === item.name ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
                     }`}
@@ -153,7 +153,7 @@ export default function Navbar() {
                       <Link
                         key={subItem.name}
                         href={subItem.href}
-                        onClick={() => setIsOpen(false)} // Tutup navbar utuh pas menu diklik
+                        onClick={() => setIsOpen(false)}
                         className="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
                       >
                         {subItem.name}
@@ -183,7 +183,7 @@ export default function Navbar() {
             </Link>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
