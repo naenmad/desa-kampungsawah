@@ -4,10 +4,16 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isAdminRoute = pathname === "/login" || pathname?.startsWith("/dashboard");
+
   const [isOpen, setIsOpen] = useState(false);
   const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
+
+  if (isAdminRoute) return null;
 
   const menuItems = [
     { name: "Beranda", href: "/" },

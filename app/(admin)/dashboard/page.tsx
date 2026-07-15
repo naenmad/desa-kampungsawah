@@ -1,0 +1,227 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import {
+  FileText, MessageSquare, Newspaper, Users, LogOut,
+  User, Menu, X, Landmark, Calendar, BarChart3, Mail, Award
+} from "lucide-react";
+
+// Import modular tab components
+import TabBeritaTerkini from "@/components/features/admin/TabBeritaTerkini";
+import TabDataPenduduk from "@/components/features/admin/TabDataPenduduk";
+import TabSejarahDesa from "@/components/features/admin/TabSejarahDesa";
+import TabStrukturPerangkat from "@/components/features/admin/TabStrukturPerangkat";
+import TabPotensiDesa from "@/components/features/admin/TabPotensiDesa";
+import TabAPBDes from "@/components/features/admin/TabAPBDes";
+import TabGaleriKegiatan from "@/components/features/admin/TabGaleriKegiatan";
+import TabAdministrasiSurat from "@/components/features/admin/TabAdministrasiSurat";
+import TabPengaduanWarga from "@/components/features/admin/TabPengaduanWarga";
+import TabKontakMasuk from "@/components/features/admin/TabKontakMasuk";
+import TabKelolaAdmin from "@/components/features/admin/TabKelolaAdmin";
+
+type AdminTab =
+  | "berita-terkini"
+  | "data-penduduk"
+  | "sejarah"
+  | "struktur-perangkat"
+  | "potensi-desa"
+  | "apbdes"
+  | "galeri-kegiatan"
+  | "administrasi-surat"
+  | "pengaduan-warga"
+  | "kontak-masuk"
+  | "kelola-admin";
+
+export default function AdminDashboardPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<AdminTab>("berita-terkini");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    router.push("/login");
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col lg:flex-row font-sans">
+
+      {/* 1. SIDEBAR (Tema Emerald-White) */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:static lg:flex lg:flex-col lg:shrink-0`}>
+
+        {/* Sidebar Header */}
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white">
+          <div className="flex items-center space-x-3">
+            <Image
+              src="/images/logo-karawang.svg"
+              alt="Logo Kabupaten Karawang"
+              width={24}
+              height={24}
+              className="w-6 h-6 object-contain"
+            />
+            <span className="font-bold text-base text-slate-900 tracking-wide">Portal Admin KSW</span>
+          </div>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-650 transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Sidebar Menu Grouping */}
+        <div className="flex-grow overflow-y-auto px-4 py-6 space-y-6">
+
+          {/* Group 1: Profil Desa */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Profil Desa</span>
+            <button
+              onClick={() => { setActiveTab("berita-terkini"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "berita-terkini" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Newspaper className="w-4 h-4 text-emerald-600" />
+              <span>Berita Terkini</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("data-penduduk"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "data-penduduk" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Users className="w-4 h-4 text-emerald-600" />
+              <span>Data Penduduk</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("sejarah"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "sejarah" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Calendar className="w-4 h-4 text-emerald-600" />
+              <span>Sejarah Desa</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("struktur-perangkat"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "struktur-perangkat" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Award className="w-4 h-4 text-emerald-600" />
+              <span>Struktur Perangkat</span>
+            </button>
+          </div>
+
+          {/* Group 2: Informasi Publik */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Informasi Publik</span>
+            <button
+              onClick={() => { setActiveTab("potensi-desa"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "potensi-desa" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <BarChart3 className="w-4 h-4 text-emerald-600" />
+              <span>Potensi Desa</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("apbdes"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "apbdes" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Landmark className="w-4 h-4 text-emerald-600" />
+              <span>Transparansi APBDes</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("galeri-kegiatan"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "galeri-kegiatan" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Users className="w-4 h-4 text-emerald-600" />
+              <span>Galeri Kegiatan</span>
+            </button>
+          </div>
+
+          {/* Group 3: Layanan Warga */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Layanan Warga</span>
+            <button
+              onClick={() => { setActiveTab("administrasi-surat"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "administrasi-surat" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <FileText className="w-4 h-4 text-emerald-600" />
+              <span>Administrasi</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("pengaduan-warga"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "pengaduan-warga" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              <span>Laporan Warga</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("kontak-masuk"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "kontak-masuk" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Mail className="w-4 h-4 text-emerald-600" />
+              <span>Kontak Masuk</span>
+            </button>
+          </div>
+
+          {/* Group 4: Pengaturan */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Pengaturan</span>
+            <button
+              onClick={() => { setActiveTab("kelola-admin"); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "kelola-admin" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <User className="w-4 h-4 text-emerald-600" />
+              <span>Kelola Admin</span>
+            </button>
+          </div>
+
+        </div>
+
+        {/* Sidebar Logout */}
+        <div className="p-4 border-t border-slate-150 bg-white">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-3 py-2.5 text-slate-600 hover:bg-red-50 hover:text-red-650 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Keluar Portal</span>
+          </button>
+        </div>
+
+      </aside>
+
+      {/* 2. MAIN CONTAINER */}
+      <div className="flex-1 flex flex-col min-w-0">
+
+        {/* Header Atas */}
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0">
+          <div className="flex items-center space-x-4">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-slate-400 hover:text-slate-600">
+              <Menu className="w-6 h-6" />
+            </button>
+            <h2 className="text-base font-black text-slate-900 capitalize tracking-tight flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{activeTab.replace("-", " ")}</span>
+            </h2>
+          </div>
+
+          <div className="flex items-center space-x-2 text-sm text-slate-600 font-medium">
+            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center font-bold text-xs">
+              SA
+            </div>
+            <span className="hidden sm:inline text-xs font-bold text-slate-800">Super Admin</span>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+          <div className="max-w-5xl mx-auto space-y-6">
+            {activeTab === "berita-terkini" && <TabBeritaTerkini />}
+            {activeTab === "data-penduduk" && <TabDataPenduduk />}
+            {activeTab === "sejarah" && <TabSejarahDesa />}
+            {activeTab === "struktur-perangkat" && <TabStrukturPerangkat />}
+            {activeTab === "potensi-desa" && <TabPotensiDesa />}
+            {activeTab === "apbdes" && <TabAPBDes />}
+            {activeTab === "galeri-kegiatan" && <TabGaleriKegiatan />}
+            {activeTab === "administrasi-surat" && <TabAdministrasiSurat />}
+            {activeTab === "pengaduan-warga" && <TabPengaduanWarga />}
+            {activeTab === "kontak-masuk" && <TabKontakMasuk />}
+            {activeTab === "kelola-admin" && <TabKelolaAdmin />}
+          </div>
+        </main>
+      </div>
+
+    </div>
+  );
+}
