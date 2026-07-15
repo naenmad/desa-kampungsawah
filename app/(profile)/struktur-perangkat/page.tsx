@@ -1,4 +1,4 @@
-import { Shield, Mail, Phone, Award, User } from "lucide-react";
+import { Shield } from "lucide-react";
 import Card from "@/components/ui/Card";
 import StrukturOrganisasi from "@/components/features/StrukturOrganisasi";
 
@@ -109,30 +109,22 @@ export default function StrukturPerangkatPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {listPerangkat.map((p, idx) => (
-            <Card key={idx} className="p-6 bg-white hover:shadow-md transition-shadow border border-gray-100 flex flex-col justify-between space-y-4">
-              <div className="space-y-4">
-                {/* Header card: avatar and title */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-lg border border-emerald-100">
-                    {p.avatarText}
-                  </div>
-                  <div>
-                    <h3 className="font-extrabold text-gray-800 text-sm leading-tight">{p.name}</h3>
-                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">{p.role}</span>
-                  </div>
+            <Card key={idx} className="p-6 bg-white hover:shadow-md transition-shadow border border-gray-100 space-y-4">
+              {/* Header card: avatar and title */}
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-lg border border-emerald-100">
+                  {p.avatarText}
                 </div>
-                
-                {/* Job Description */}
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {p.description}
-                </p>
+                <div>
+                  <h3 className="font-extrabold text-gray-800 text-sm leading-tight">{p.name}</h3>
+                  <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">{p.role}</span>
+                </div>
               </div>
-
-              {/* Action/Contact minimal info */}
-              <div className="pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-400 font-medium">
-                <span className="flex items-center"><Mail className="w-3 h-3 text-emerald-600 mr-1" /> desakampungsawah@gmail.com</span>
-                <span className="flex items-center"><Phone className="w-3 h-3 text-emerald-600 mr-1" /> +62 812-xxxx</span>
-              </div>
+              
+              {/* Job Description */}
+              <p className="text-xs text-gray-500 leading-relaxed">
+                {p.description}
+              </p>
             </Card>
           ))}
         </div>

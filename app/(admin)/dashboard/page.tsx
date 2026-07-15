@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   FileText, MessageSquare, Newspaper, Users, LogOut,
-  User, Menu, X, Landmark, Calendar, BarChart3, Mail, Award
+  User, Menu, X, Landmark, Calendar, BarChart3, Mail, Award, Home
 } from "lucide-react";
 
 // Import modular tab components
+import TabOverview from "@/components/features/admin/TabOverview";
 import TabBeritaTerkini from "@/components/features/admin/TabBeritaTerkini";
 import TabDataPenduduk from "@/components/features/admin/TabDataPenduduk";
 import TabSejarahDesa from "@/components/features/admin/TabSejarahDesa";
@@ -22,6 +23,7 @@ import TabKontakMasuk from "@/components/features/admin/TabKontakMasuk";
 import TabKelolaAdmin from "@/components/features/admin/TabKelolaAdmin";
 
 type AdminTab =
+  | "overview"
   | "berita-terkini"
   | "data-penduduk"
   | "sejarah"
@@ -36,10 +38,24 @@ type AdminTab =
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<AdminTab>("berita-terkini");
+  const [activeTab, setActiveTab] = useState<AdminTab>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    const savedTab = sessionStorage.getItem("admin_active_tab");
+    if (savedTab) {
+      setActiveTab(savedTab as AdminTab);
+    }
+  }, []);
+
+  const handleTabChange = (tab: AdminTab) => {
+    setActiveTab(tab);
+    sessionStorage.setItem("admin_active_tab", tab);
+    setSidebarOpen(false);
+  };
+
   const handleLogout = () => {
+    sessionStorage.removeItem("admin_active_tab");
     router.push("/login");
   };
 
@@ -69,32 +85,44 @@ export default function AdminDashboardPage() {
         {/* Sidebar Menu Grouping */}
         <div className="flex-grow overflow-y-auto px-4 py-6 space-y-6">
 
+          {/* Group 0: Beranda */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Navigasi Utama</span>
+            <button
+              onClick={() => handleTabChange("overview")}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "overview" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Home className="w-4 h-4 text-emerald-600" />
+              <span>Beranda Admin</span>
+            </button>
+          </div>
+
           {/* Group 1: Profil Desa */}
           <div className="space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Profil Desa</span>
             <button
-              onClick={() => { setActiveTab("berita-terkini"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("berita-terkini")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "berita-terkini" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Newspaper className="w-4 h-4 text-emerald-600" />
               <span>Berita Terkini</span>
             </button>
             <button
-              onClick={() => { setActiveTab("data-penduduk"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("data-penduduk")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "data-penduduk" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Users className="w-4 h-4 text-emerald-600" />
               <span>Data Penduduk</span>
             </button>
             <button
-              onClick={() => { setActiveTab("sejarah"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("sejarah")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "sejarah" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Sejarah Desa</span>
             </button>
             <button
-              onClick={() => { setActiveTab("struktur-perangkat"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("struktur-perangkat")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "struktur-perangkat" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Award className="w-4 h-4 text-emerald-600" />
@@ -106,21 +134,21 @@ export default function AdminDashboardPage() {
           <div className="space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Informasi Publik</span>
             <button
-              onClick={() => { setActiveTab("potensi-desa"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("potensi-desa")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "potensi-desa" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <BarChart3 className="w-4 h-4 text-emerald-600" />
               <span>Potensi Desa</span>
             </button>
             <button
-              onClick={() => { setActiveTab("apbdes"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("apbdes")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "apbdes" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Landmark className="w-4 h-4 text-emerald-600" />
               <span>Transparansi APBDes</span>
             </button>
             <button
-              onClick={() => { setActiveTab("galeri-kegiatan"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("galeri-kegiatan")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "galeri-kegiatan" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Users className="w-4 h-4 text-emerald-600" />
@@ -132,21 +160,21 @@ export default function AdminDashboardPage() {
           <div className="space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Layanan Warga</span>
             <button
-              onClick={() => { setActiveTab("administrasi-surat"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("administrasi-surat")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "administrasi-surat" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <FileText className="w-4 h-4 text-emerald-600" />
               <span>Administrasi</span>
             </button>
             <button
-              onClick={() => { setActiveTab("pengaduan-warga"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("pengaduan-warga")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "pengaduan-warga" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <MessageSquare className="w-4 h-4 text-emerald-600" />
               <span>Laporan Warga</span>
             </button>
             <button
-              onClick={() => { setActiveTab("kontak-masuk"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("kontak-masuk")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "kontak-masuk" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <Mail className="w-4 h-4 text-emerald-600" />
@@ -158,7 +186,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">Pengaturan</span>
             <button
-              onClick={() => { setActiveTab("kelola-admin"); setSidebarOpen(false); }}
+              onClick={() => handleTabChange("kelola-admin")}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "kelola-admin" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
             >
               <User className="w-4 h-4 text-emerald-600" />
@@ -207,6 +235,7 @@ export default function AdminDashboardPage() {
         {/* Main Content Area */}
         <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
           <div className="max-w-5xl mx-auto space-y-6">
+            {activeTab === "overview" && <TabOverview onNavigate={handleTabChange} />}
             {activeTab === "berita-terkini" && <TabBeritaTerkini />}
             {activeTab === "data-penduduk" && <TabDataPenduduk />}
             {activeTab === "sejarah" && <TabSejarahDesa />}

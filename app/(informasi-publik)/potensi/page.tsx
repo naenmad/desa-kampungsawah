@@ -1,10 +1,32 @@
 import Image from "next/image";
-import { Landmark, Wheat, ShoppingBag, ArrowRight, Award, BarChart3, Settings } from "lucide-react";
+import { Landmark, Wheat, ShoppingBag, ArrowRight, Award, BarChart3 } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 
 export default function PotensiDesaPage() {
+  const listPertanianPoints = [
+    {
+      title: "Mitigasi Hama Modern",
+      description: "Kolaborasi aktif dengan penyuluh pertanian lapangan untuk meminimalisasi penyakit sundep (padi kopong) dan ngengat melalui pemantauan berkala.",
+    },
+    {
+      title: "Manajemen Saluran Irigasi",
+      description: "Pengawasan pintu air di Dusun Campea dan Dusun Karajan untuk memastikan pasokan air sawah tetap tercukupi walau saat musim kemarau.",
+    },
+  ];
+
+  const listUmkmCards = [
+    {
+      title: "Konveksi Dompet (Dusun Puloharapan)",
+      description: "Sentra konveksi dompet eceran dan grosir. Produk dipasarkan secara daring (online marketplace) hingga dikirim ke berbagai kota besar di Jawa Barat dan Jabodetabek.",
+    },
+    {
+      title: "Kuliner Kue Basah (Dusun Pasar)",
+      description: "Aktivitas pembuatan aneka kue tradisional basah setiap subuh. Menjadi penyuplai utama lapak sarapan pagi di kecamatan Jayakerta dan sekitarnya.",
+    },
+  ];
+
   return (
     <div className="space-y-20 pb-20 bg-white">
       {/* 1. HERO SECTION */}
@@ -84,28 +106,17 @@ export default function PotensiDesaPage() {
             </p>
 
             <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0 text-emerald-600 border border-emerald-100">
-                  <Settings className="w-4 h-4" />
+              {listPertanianPoints.map((item, idx) => (
+                <div key={idx} className="flex items-start space-x-3">
+                  <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full mt-2 shrink-0" />
+                  <div>
+                    <span className="block font-bold text-gray-800 text-sm">{item.title}</span>
+                    <span className="text-xs text-gray-500 leading-relaxed">
+                      {item.description}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="block font-bold text-gray-800 text-sm">Mitigasi Hama Modern</span>
-                  <span className="text-xs text-gray-500 leading-relaxed">
-                    Kolaborasi aktif dengan penyuluh pertanian lapangan untuk meminimalisasi penyakit sundep (padi kopong) dan ngengat melalui pemantauan berkala.
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0 text-emerald-600 border border-emerald-100">
-                  <Landmark className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="block font-bold text-gray-800 text-sm">Manajemen Saluran Irigasi</span>
-                  <span className="text-xs text-gray-500 leading-relaxed">
-                    Pengawasan pintu air di Dusun Campea dan Dusun Karajan untuk memastikan pasokan air sawah tetap tercukupi walau saat musim kemarau.
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -148,23 +159,15 @@ export default function PotensiDesaPage() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* Card UMKM 1 */}
-              <Card className="p-6 space-y-3 bg-gray-50/50 hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600" />
-                <h3 className="font-bold text-gray-800 text-sm">Konveksi Dompet (Dusun Puloharapan)</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Sentra konveksi dompet eceran dan grosir. Produk dipasarkan secara daring (online marketplace) hingga dikirim ke berbagai kota besar di Jawa Barat dan Jabodetabek.
-                </p>
-              </Card>
-
-              {/* Card UMKM 2 */}
-              <Card className="p-6 space-y-3 bg-gray-50/50 hover:shadow-md transition-shadow relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600" />
-                <h3 className="font-bold text-gray-800 text-sm">Kuliner Kue Basah (Dusun Pasar)</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Aktivitas pembuatan aneka kue tradisional basah setiap subuh. Menjadi penyuplai utama lapak sarapan pagi di kecamatan Jayakerta dan sekitarnya.
-                </p>
-              </Card>
+              {listUmkmCards.map((item, idx) => (
+                <Card key={idx} className="p-6 space-y-3 bg-gray-50/50 hover:shadow-md transition-shadow relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600" />
+                  <h3 className="font-bold text-gray-800 text-sm">{item.title}</h3>
+                  <p className="text-xs text-gray-455 leading-relaxed">
+                    {item.description}
+                  </p>
+                </Card>
+              ))}
             </div>
           </div>
         </div>

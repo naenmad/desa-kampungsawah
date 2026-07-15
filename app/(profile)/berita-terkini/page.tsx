@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Search, Calendar, ChevronRight, Landmark, Tag } from "lucide-react";
+import Image from "next/image";
 import Input from "@/components/ui/Input";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -14,6 +15,7 @@ type NewsItem = {
   slug: string;
   description: string;
   content: string;
+  image: string;
 };
 
 const beritaList: NewsItem[] = [
@@ -25,6 +27,7 @@ const beritaList: NewsItem[] = [
     slug: "masalah-persampahan-dusun-karajan",
     description: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan dipicu warga luar desa. Program TPST oleh KSM dijadwalkan aktif kembali awal Juli menunggu perbaikan mesin guna merumuskan regulasi sanksi tegas.",
     content: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan (jalur utama Pasar Dengklok) dipicu warga luar desa. Program TPST oleh KSM dijadwalkan aktif kembali awal Juli menunggu perbaikan mesin guna merumuskan regulasi sanksi tegas.",
+    image: "/images/galeri-rapat.png"
   },
   {
     id: 2,
@@ -34,6 +37,7 @@ const beritaList: NewsItem[] = [
     slug: "potensi-pertanian-manajemen-air",
     description: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep (padi kopong) serta tanah asam-asaman kini mulai diarahkan menuju edukasi Pertanian Modern bersama mahasiswa.",
     content: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep (padi kopong) serta tanah asam-asaman kini mulai diarahkan menuju edukasi Pertanian Modern bersama mahasiswa.",
+    image: "/images/galeri-pertanian.png"
   },
   {
     id: 3,
@@ -43,6 +47,7 @@ const beritaList: NewsItem[] = [
     slug: "penguatan-naungan-umkm-lokal",
     description: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi naungan resmi guna mengatasi kendala sistem titip jual produsen ke pedagang.",
     content: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi naungan resmi guna mengatasi kendala sistem titip jual produsen ke pedagang.",
+    image: "/images/galeri-umkm.png"
   },
   {
     id: 4,
@@ -52,6 +57,7 @@ const beritaList: NewsItem[] = [
     slug: "pemeriksaan-rutin-posyandu-campea",
     description: "Layanan rutin bulanan pemantauan tumbuh kembang balita, imunisasi dasar, serta penyuluhan pemenuhan gizi seimbang diselenggarakan serentak di Posyandu Mawar Dusun Campea untuk menekan angka stunting.",
     content: "Layanan rutin bulanan pemantauan tumbuh kembang balita, imunisasi dasar, serta penyuluhan pemenuhan gizi seimbang diselenggarakan serempak di Posyandu Mawar Dusun Campea untuk menekan angka stunting.",
+    image: "/images/background.webp"
   },
   {
     id: 5,
@@ -61,6 +67,7 @@ const beritaList: NewsItem[] = [
     slug: "penyaluran-blt-tahap-dua-desa",
     description: "Pemerintah Desa Kampungsawah menyalurkan Bantuan Langsung Tunai (BLT) bersumber dari Dana Desa tahap II secara transparan kepada keluarga penerima manfaat prasejahtera yang terdata di sistem kependudukan.",
     content: "Pemerintah Desa Kampungsawah menyalurkan Bantuan Langsung Tunai (BLT) bersumber dari Dana Desa tahap II secara transparan kepada keluarga penerima manfaat prasejahtera yang terdata di sistem kependudukan.",
+    image: "/images/background.webp"
   },
 ];
 
@@ -144,6 +151,16 @@ export default function BeritaTerkiniPage() {
                 key={news.id}
                 className="group bg-white flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative border border-gray-100"
               >
+                {/* Header Image */}
+                <div className="relative h-48 w-full overflow-hidden bg-slate-100 shrink-0">
+                  <Image
+                    src={news.image || "/images/background.webp"}
+                    alt={news.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
                 <div className="p-6 space-y-4 flex-grow">
                   {/* Category and Date meta */}
                   <div className="flex justify-between items-center text-xs">
@@ -226,6 +243,16 @@ export default function BeritaTerkiniPage() {
                 {selectedNews.title}
               </h2>
               <div className="w-20 h-1 bg-emerald-600 rounded-full" />
+            </div>
+
+            {/* Featured Image */}
+            <div className="relative h-64 md:h-96 w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm shrink-0">
+              <Image
+                src={selectedNews.image || "/images/background.webp"}
+                alt={selectedNews.title}
+                fill
+                className="object-cover"
+              />
             </div>
 
             {/* Content Body */}

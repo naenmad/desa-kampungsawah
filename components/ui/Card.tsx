@@ -3,14 +3,18 @@ import type { ReactNode } from "react";
 type CardProps = {
 	children: ReactNode;
 	className?: string;
+	onClick?: () => void;
 };
 
-export default function Card({ children, className }: CardProps) {
+export default function Card({ children, className, onClick }: CardProps) {
 	return (
-		<div className={[
-			"rounded-2xl border border-gray-200/60 bg-white shadow-sm",
-			className,
-		].filter(Boolean).join(" ")}>
+		<div
+			onClick={onClick}
+			className={[
+				"rounded-2xl border border-gray-200/60 bg-white shadow-sm",
+				className,
+			].filter(Boolean).join(" ")}
+		>
 			{children}
 		</div>
 	);

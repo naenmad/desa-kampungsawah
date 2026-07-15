@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useContactInfo } from "@/lib/contactService";
 
 export default function Footer() {
   const pathname = usePathname();
+  const contact = useContactInfo();
   const isAdminRoute = pathname === "/login" || pathname?.startsWith("/dashboard");
 
   const currentYear = new Date().getFullYear();
@@ -66,21 +68,21 @@ export default function Footer() {
           <ul className="space-y-3 text-sm text-gray-400">
             <li className="flex items-start space-x-3">
               <MapPin className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-              <span>Jl. Raya Kampungsawah No. 82, Jayakerta, Kabupaten Karawang</span>
+              <span>{contact.address}</span>
             </li>
             <li className="flex items-center space-x-3">
               <Phone className="w-4 h-4 text-emerald-500" />
-              <span>+62 812-3456-7890</span>
+              <span>{contact.phone}</span>
             </li>
             <li className="flex items-center space-x-3">
               <Mail className="w-4 h-4 text-emerald-500" />
-              <span>kontak@desakampungsawah.id</span>
+              <span>{contact.email}</span>
             </li>
             <li className="flex items-start space-x-3 pt-2 border-t border-gray-800">
               <Clock className="w-4 h-4 text-emerald-500 mt-0.5" />
               <div>
                 <span className="block text-white font-medium text-xs">Jam Pelayanan Kantor:</span>
-                <span className="text-xs text-gray-400">Senin - Jumat | 08:00 - 15:00 WIB</span>
+                <span className="text-xs text-gray-400">{contact.hours}</span>
               </div>
             </li>
           </ul>

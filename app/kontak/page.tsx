@@ -4,9 +4,11 @@ import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, Landmark } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { Input, TextArea } from "@/components/ui/Input";
+import { useContactInfo } from "@/lib/contactService";
 
 export default function KontakPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const contact = useContactInfo();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +62,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <span className="block font-bold text-gray-800 text-xs uppercase tracking-wider">Alamat Lengkap</span>
-                    <span className="text-xs text-gray-500 leading-relaxed">Jl. Raya Kampungsawah No. 82, Jayakerta, Kabupaten Karawang, Jawa Barat 41358</span>
+                    <span className="text-xs text-gray-500 leading-relaxed">{contact.address}</span>
                   </div>
                 </li>
 
@@ -70,7 +72,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <span className="block font-bold text-gray-800 text-xs uppercase tracking-wider">Telepon & WhatsApp</span>
-                    <span className="text-xs text-gray-500 leading-relaxed">+62 812-3456-7890</span>
+                    <span className="text-xs text-gray-500 leading-relaxed">{contact.phone}</span>
                   </div>
                 </li>
 
@@ -80,7 +82,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <span className="block font-bold text-gray-800 text-xs uppercase tracking-wider">Email Resmi</span>
-                    <span className="text-xs text-gray-500 leading-relaxed">kontak@desakampungsawah.id</span>
+                    <span className="text-xs text-gray-500 leading-relaxed">{contact.email}</span>
                   </div>
                 </li>
 
@@ -90,7 +92,7 @@ export default function KontakPage() {
                   </div>
                   <div>
                     <span className="block font-bold text-gray-800 text-xs uppercase tracking-wider">Jam Pelayanan Kantor</span>
-                    <span className="text-xs text-gray-500 leading-relaxed">Senin - Jumat | 08:00 - 15:00 WIB</span>
+                    <span className="text-xs text-gray-500 leading-relaxed">{contact.hours}</span>
                   </div>
                 </li>
               </ul>
