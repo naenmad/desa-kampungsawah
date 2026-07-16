@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br from-emerald-50 via-slate-50 to-emerald-100">
+    <div id="admin-login-root" className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden bg-gradient-to-br from-emerald-50 via-slate-50 to-emerald-100">
       
       {/* Decorative Circles */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-200/25 rounded-full blur-3xl -ml-20 -mt-20" />

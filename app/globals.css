@@ -71,3 +71,11 @@ body {
   font-family: var(--font-sans), sans-serif;
 }
 
+/* Sembunyikan Nav & Footer Publik secara instan pada halaman Admin */
+body:has(#admin-dashboard-root) nav,
+body:has(#admin-dashboard-root) footer,
+body:has(#admin-login-root) nav,
+body:has(#admin-login-root) footer {
+  display: none !important;
+}
+

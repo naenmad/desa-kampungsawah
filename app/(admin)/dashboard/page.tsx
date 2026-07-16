@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 
 // Import modular tab components
+import AdminNavbar from "@/components/features/admin/AdminNavbar";
+import AdminFooter from "@/components/features/admin/AdminFooter";
 import TabOverview from "@/components/features/admin/TabOverview";
 import TabBeritaTerkini from "@/components/features/admin/TabBeritaTerkini";
 import TabDataPenduduk from "@/components/features/admin/TabDataPenduduk";
@@ -60,10 +62,10 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col lg:flex-row font-sans">
+    <div id="admin-dashboard-root" className="h-screen overflow-hidden bg-slate-50 text-slate-900 flex flex-col lg:flex-row font-sans">
 
       {/* 1. SIDEBAR (Tema Emerald-White) */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:static lg:flex lg:flex-col lg:shrink-0`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:static lg:flex lg:flex-col lg:shrink-0 h-full`}>
 
         {/* Sidebar Header */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white">
@@ -210,27 +212,9 @@ export default function AdminDashboardPage() {
       </aside>
 
       {/* 2. MAIN CONTAINER */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
-        {/* Header Atas */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0">
-          <div className="flex items-center space-x-4">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-slate-400 hover:text-slate-600">
-              <Menu className="w-6 h-6" />
-            </button>
-            <h2 className="text-base font-black text-slate-900 capitalize tracking-tight flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>{activeTab.replace("-", " ")}</span>
-            </h2>
-          </div>
-
-          <div className="flex items-center space-x-2 text-sm text-slate-600 font-medium">
-            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center font-bold text-xs">
-              SA
-            </div>
-            <span className="hidden sm:inline text-xs font-bold text-slate-800">Super Admin</span>
-          </div>
-        </header>
+        <AdminNavbar activeTab={activeTab} onOpenSidebar={() => setSidebarOpen(true)} />
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
@@ -247,6 +231,10 @@ export default function AdminDashboardPage() {
             {activeTab === "pengaduan-warga" && <TabPengaduanWarga />}
             {activeTab === "kontak-masuk" && <TabKontakMasuk />}
             {activeTab === "kelola-admin" && <TabKelolaAdmin />}
+
+            <div className="pt-8">
+              <AdminFooter />
+            </div>
           </div>
         </main>
       </div>
