@@ -1,60 +1,15 @@
+"use client";
+
 import { Shield } from "lucide-react";
 import Card from "@/components/ui/Card";
 import StrukturOrganisasi from "@/components/features/StrukturOrganisasi";
-
-type PerangkatProfile = {
-  name: string;
-  role: string;
-  description: string;
-  avatarText: string;
-};
+import { useApparatusList } from "@/lib/structureService";
 
 export default function StrukturPerangkatPage() {
-  const listPerangkat: PerangkatProfile[] = [
-    {
-      name: "Aparatur Kepala Desa",
-      role: "Kepala Desa Kampungsawah",
-      description: "Memimpin jalannya pemerintahan desa, menyusun kebijakan anggaran, dan mengoordinasikan program pembangunan di seluruh dusun.",
-      avatarText: "KD",
-    },
-    {
-      name: "Arif Munawir",
-      role: "Sekretaris Desa",
-      description: "Bertanggung jawab atas administrasi umum, pelayanan data kependudukan, pengarsipan berkas permohonan, dan koordinasi staf.",
-      avatarText: "AM",
-    },
-    {
-      name: "Yuda Wuguna",
-      role: "Kasi Pemerintahan",
-      description: "Mengurus administrasi pertanahan, ketenteraman dan ketertiban warga, serta penegakan hukum peraturan desa.",
-      avatarText: "YW",
-    },
-    {
-      name: "Aad Jihaddudin",
-      role: "Kasi Kesejahteraan (Kesra)",
-      description: "Mengoordinasikan program jaminan sosial, penyaluran bantuan pangan (BLT), pelayanan keagamaan, serta kepemudaan.",
-      avatarText: "AJ",
-    },
-    {
-      name: "Asep Johan",
-      role: "Kasi Pelayanan",
-      description: "Mengelola loket pelayanan mandiri surat warga, penerimaan aspirasi pengaduan, dan fasilitasi program Posyandu/Kesehatan.",
-      avatarText: "AJ",
-    },
-    {
-      name: "Ari Bukhori",
-      role: "Kaur Keuangan",
-      description: "Menyusun pembukuan laporan APBDes, realisasi pos belanja pembangunan, serta laporan pertanggungjawaban anggaran.",
-      avatarText: "AB",
-    },
-  ];
+  const { apparatus } = useApparatusList();
 
-  const listKadus: PerangkatProfile[] = [
-    { name: "Dede Saepul", role: "Kepala Dusun Pasar", description: "Perwakilan pelayanan kependudukan wilayah Dusun Pasar.", avatarText: "DS" },
-    { name: "Ahmad Dudis", role: "Kepala Dusun Puloharapan", description: "Perwakilan pelayanan kependudukan wilayah Dusun Puloharapan.", avatarText: "AD" },
-    { name: "Yayan bcb Haryanto", role: "Kepala Dusun Campea", description: "Perwakilan pelayanan kependudukan wilayah Dusun Campea.", avatarText: "YH" },
-    { name: "Ujang Zaenudin", role: "Kepala Dusun Karajan", description: "Perwakilan pelayanan kependudukan wilayah Dusun Karajan.", avatarText: "UZ" },
-  ];
+  const listPerangkat = apparatus.filter((item) => item.type !== "dusun");
+  const listKadus = apparatus.filter((item) => item.type === "dusun");
 
   return (
     <div className="space-y-16 pb-20 bg-white">

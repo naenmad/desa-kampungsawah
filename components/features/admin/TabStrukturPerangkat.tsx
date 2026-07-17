@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Plus, Trash2, Edit, X, Award, Eye, FileText, User, ArrowUp, ArrowDown, CheckCircle2 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input, { Select, TextArea } from "@/components/ui/Input";
+import { useApparatusList } from "@/lib/structureService";
 
 // Import Mermaid dynamically for client-side rendering
 const MermaidRender = dynamic(() => import("../../ui/Mermaid.js"), {
@@ -134,7 +135,7 @@ const initialApparatus: ApparatusItem[] = [
 ];
 
 export default function TabStrukturPerangkat() {
-  const [items, setItems] = useState<ApparatusItem[]>(initialApparatus);
+  const { apparatus: items, setApparatus: setItems } = useApparatusList();
   const [previewMode, setPreviewMode] = useState<"mermaid" | "cards">("mermaid");
   const [editingId, setEditingId] = useState<string | null>(null);
   

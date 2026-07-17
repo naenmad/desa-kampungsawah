@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle2, AlertCircle, Home, Users, Award, Landmark } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
+import { getPopulationData, savePopulationData } from "@/lib/populationService";
 
 type DusunData = {
   laki: number;
@@ -79,6 +80,10 @@ export default function TabDataPenduduk() {
   const [activeDusun, setActiveDusun] = useState<"pasar" | "puloharapan" | "campea" | "karajan">("pasar");
   const [isSaved, setIsSaved] = useState(false);
 
+  useEffect(() => {
+    setData(getPopulationData());
+  }, []);
+
   // 1. hitung akumulasi global otomatis
   const totalPasar = data.pasar.laki + data.pasar.perempuan;
   const totalPulo = data.puloharapan.laki + data.puloharapan.perempuan;
@@ -112,6 +117,7 @@ export default function TabDataPenduduk() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    savePopulationData(data);
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };

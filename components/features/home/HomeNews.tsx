@@ -2,15 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Card from "@/components/ui/Card";
 import SectionHeading from "@/components/ui/SectionHeading";
-
-export type NewsItem = {
-  id: number;
-  title: string;
-  date: string;
-  category: string;
-  slug: string;
-  description: string;
-};
+import { NewsItem } from "@/lib/newsService";
 
 type HomeNewsProps = {
   latestNews: NewsItem[];
@@ -24,7 +16,7 @@ export default function HomeNews({ latestNews }: HomeNewsProps) {
           title="Seputar Kabar Desa"
           description="Ikuti transparansi program kerja, berita pembangunan ekonomi, dan agenda sosial terkini warga."
         />
-        <Link href="/berita" className="group text-emerald-600 font-bold text-sm flex items-center space-x-1 hover:text-emerald-700 shrink-0">
+        <Link href="/berita-terkini" className="group text-emerald-600 font-bold text-sm flex items-center space-x-1 hover:text-emerald-700 shrink-0">
           <span>Lihat Semua Berita</span>
           <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
         </Link>
@@ -41,7 +33,7 @@ export default function HomeNews({ latestNews }: HomeNewsProps) {
                 <span className="text-gray-400 font-medium">{news.date}</span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 leading-snug group-hover:text-emerald-600 transition-colors line-clamp-2">
-                <Link href={`/berita/${news.slug}`}>{news.title}</Link>
+                <Link href={`/berita-terkini?id=${news.id}`}>{news.title}</Link>
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed line-clamp-4">
                 {news.description}
@@ -49,7 +41,7 @@ export default function HomeNews({ latestNews }: HomeNewsProps) {
             </div>
             <div className="px-6 pb-6 pt-2 border-t border-gray-50">
               <Link
-                href={`/berita/${news.slug}`}
+                href={`/berita-terkini?id=${news.id}`}
                 className="text-gray-700 font-bold text-xs hover:text-emerald-600 flex items-center space-x-1 group/btn"
               >
                 <span>Baca Selengkapnya</span>

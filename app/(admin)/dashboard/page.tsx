@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   FileText, MessageSquare, Newspaper, Users, LogOut,
-  User, Menu, X, Landmark, Calendar, BarChart3, Mail, Award, Home
+  User, Menu, X, Landmark, Calendar, BarChart3, Mail, Award, Home, Settings
 } from "lucide-react";
 
 // Import modular tab components
@@ -23,9 +23,11 @@ import TabAdministrasiSurat from "@/components/features/admin/TabAdministrasiSur
 import TabPengaduanWarga from "@/components/features/admin/TabPengaduanWarga";
 import TabKontakMasuk from "@/components/features/admin/TabKontakMasuk";
 import TabKelolaAdmin from "@/components/features/admin/TabKelolaAdmin";
+import TabKelolaBeranda from "@/components/features/admin/TabKelolaBeranda";
 
 type AdminTab =
   | "overview"
+  | "kelola-beranda"
   | "berita-terkini"
   | "data-penduduk"
   | "sejarah"
@@ -96,6 +98,13 @@ export default function AdminDashboardPage() {
             >
               <Home className="w-4 h-4 text-emerald-600" />
               <span>Beranda Admin</span>
+            </button>
+            <button
+              onClick={() => handleTabChange("kelola-beranda")}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${activeTab === "kelola-beranda" ? "bg-emerald-50 text-emerald-700 font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+            >
+              <Settings className="w-4 h-4 text-emerald-600" />
+              <span>Kelola Beranda Web</span>
             </button>
           </div>
 
@@ -220,6 +229,7 @@ export default function AdminDashboardPage() {
         <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
           <div className="max-w-5xl mx-auto space-y-6">
             {activeTab === "overview" && <TabOverview onNavigate={handleTabChange} />}
+            {activeTab === "kelola-beranda" && <TabKelolaBeranda />}
             {activeTab === "berita-terkini" && <TabBeritaTerkini />}
             {activeTab === "data-penduduk" && <TabDataPenduduk />}
             {activeTab === "sejarah" && <TabSejarahDesa />}

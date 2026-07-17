@@ -5,37 +5,10 @@ import { Plus, Trash2, Edit, X } from "lucide-react";
 import Image from "next/image";
 import Card from "@/components/ui/Card";
 import Input, { Select, TextArea } from "@/components/ui/Input";
+import { useNewsList } from "@/lib/newsService";
 
 export default function TabBeritaTerkini() {
-  const [news, setNews] = useState([
-    {
-      id: 1,
-      title: "Identifikasi Masalah Persampahan & Rencana Perdes",
-      category: "Prioritas",
-      date: "14 Juli 2026",
-      description: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan dipicu warga luar desa.",
-      content: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan (jalur utama Pasar Dengklok) dipicu warga luar desa. Program TPST oleh KSM dijadwalkan aktif kembali awal Juli menunggu perbaikan mesin guna merumuskan regulasi sanksi tegas.",
-      image: "/images/galeri-rapat.png"
-    },
-    {
-      id: 2,
-      title: "Potensi Pertanian Padi & Mitigasi Hama Sundep",
-      category: "Pertanian",
-      date: "05 Juli 2026",
-      description: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep.",
-      content: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep (padi kopong) serta tanah asam-asaman kini mulai diarahkan menuju edukasi Pertanian Modern bersama mahasiswa.",
-      image: "/images/galeri-pertanian.png"
-    },
-    {
-      id: 3,
-      title: "Strategi Penguatan Kelompok Dagang Resmi UMKM",
-      category: "Ekonomi",
-      date: "28 Juni 2026",
-      description: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi.",
-      content: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi naungan resmi guna mengatasi kendala sistem titip jual produsen ke pedagang.",
-      image: "/images/galeri-umkm.png"
-    }
-  ]);
+  const { news, setNews } = useNewsList();
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newTitle, setNewTitle] = useState("");

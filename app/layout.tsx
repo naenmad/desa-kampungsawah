@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Navbar from "@/components/elements/Navbar";
 import Footer from "@/components/elements/Footer";
+import ScrollToTop from "@/components/elements/ScrollToTop";
 import "./globals.css"; // Sesuai posisi file di gambar (satu folder 'app')
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -28,6 +29,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <ScrollToTop />
       </body>
     </html>
   );

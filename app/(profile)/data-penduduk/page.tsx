@@ -1,6 +1,9 @@
+"use client";
+
 import { Landmark, Users, Home, Award, Calendar, Percent } from "lucide-react";
 import Card from "@/components/ui/Card";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { usePopulationData } from "@/lib/populationService";
 
 type StatProgressItem = {
   label: string;
@@ -10,24 +13,46 @@ type StatProgressItem = {
 };
 
 export default function DataPendudukPage() {
+  const { data } = usePopulationData();
+
+  // Accumulate
+  const totalJiwa = Object.values(data).reduce((sum, d) => sum + d.laki + d.perempuan, 0);
+  const totalKK = Object.values(data).reduce((sum, d) => sum + d.kk, 0);
+  const totalDPT = Object.values(data).reduce((sum, d) => sum + d.dpt, 0);
+
+  const totalLaki = Object.values(data).reduce((sum, d) => sum + d.laki, 0);
+  const totalPerempuan = Object.values(data).reduce((sum, d) => sum + d.perempuan, 0);
+
+  const totalJobPertanian = Object.values(data).reduce((sum, d) => sum + d.jobPertanian, 0);
+  const totalJobKaryawan = Object.values(data).reduce((sum, d) => sum + d.jobKaryawan, 0);
+  const totalJobUMKM = Object.values(data).reduce((sum, d) => sum + d.jobUMKM, 0);
+  const totalJobJasa = Object.values(data).reduce((sum, d) => sum + d.jobJasa, 0);
+
+  const totalAgeAnak = Object.values(data).reduce((sum, d) => sum + d.ageAnak, 0);
+  const totalAgeProduktif = Object.values(data).reduce((sum, d) => sum + d.ageProduktif, 0);
+  const totalAgeLansia = Object.values(data).reduce((sum, d) => sum + d.ageLansia, 0);
+
+  const percentLaki = totalJiwa ? Math.round((totalLaki / totalJiwa) * 1000) / 10 : 0;
+  const percentPerempuan = totalJiwa ? Math.round((totalPerempuan / totalJiwa) * 1000) / 10 : 0;
+
   const dusunStats: StatProgressItem[] = [
-    { label: "Dusun Pasar", count: "3.820 jiwa", percent: 28.2, colorClass: "bg-emerald-600" },
-    { label: "Dusun Puloharapan", count: "3.480 jiwa", percent: 25.7, colorClass: "bg-teal-600" },
-    { label: "Dusun Campea", count: "3.120 jiwa", percent: 23.1, colorClass: "bg-emerald-500" },
-    { label: "Dusun Karajan", count: "3.104 jiwa", percent: 23.0, colorClass: "bg-teal-500" },
+    { label: "Dusun Pasar", count: `${(data.pasar.laki + data.pasar.perempuan).toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round(((data.pasar.laki + data.pasar.perempuan) / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-emerald-600" },
+    { label: "Dusun Puloharapan", count: `${(data.puloharapan.laki + data.puloharapan.perempuan).toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round(((data.puloharapan.laki + data.puloharapan.perempuan) / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-teal-600" },
+    { label: "Dusun Campea", count: `${(data.campea.laki + data.campea.perempuan).toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round(((data.campea.laki + data.campea.perempuan) / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-emerald-500" },
+    { label: "Dusun Karajan", count: `${(data.karajan.laki + data.karajan.perempuan).toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round(((data.karajan.laki + data.karajan.perempuan) / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-teal-500" },
   ];
 
   const jobStats: StatProgressItem[] = [
-    { label: "Sektor Pertanian (Petani & Buruh)", count: "5.680 jiwa", percent: 42.0, colorClass: "bg-emerald-600" },
-    { label: "Karyawan Swasta / Buruh Pabrik", count: "3.786 jiwa", percent: 28.0, colorClass: "bg-teal-600" },
-    { label: "Perdagangan & UMKM Mandiri", count: "2.434 jiwa", percent: 18.0, colorClass: "bg-emerald-500" },
-    { label: "Jasa, ASN, TNI/Polri, & Lainnya", count: "1.624 jiwa", percent: 12.0, colorClass: "bg-teal-500" },
+    { label: "Sektor Pertanian (Petani & Buruh)", count: `${totalJobPertanian.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalJobPertanian / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-emerald-600" },
+    { label: "Karyawan Swasta / Buruh Pabrik", count: `${totalJobKaryawan.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalJobKaryawan / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-teal-600" },
+    { label: "Perdagangan & UMKM Mandiri", count: `${totalJobUMKM.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalJobUMKM / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-emerald-500" },
+    { label: "Jasa, ASN, TNI/Polri, & Lainnya", count: `${totalJobJasa.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalJobJasa / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-teal-500" },
   ];
 
   const ageStats: StatProgressItem[] = [
-    { label: "Usia Produktif (15 - 64 tahun)", count: "9.196 jiwa", percent: 68.0, colorClass: "bg-emerald-600" },
-    { label: "Anak-anak & Remaja (0 - 14 tahun)", count: "2.975 jiwa", percent: 22.0, colorClass: "bg-teal-600" },
-    { label: "Lansia (65+ tahun)", count: "1.353 jiwa", percent: 10.0, colorClass: "bg-emerald-500" },
+    { label: "Usia Produktif (15 - 64 tahun)", count: `${totalAgeProduktif.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalAgeProduktif / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-emerald-600" },
+    { label: "Anak-anak & Remaja (0 - 14 tahun)", count: `${totalAgeAnak.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalAgeAnak / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-teal-600" },
+    { label: "Lansia (65+ tahun)", count: `${totalAgeLansia.toLocaleString("id-ID")} jiwa`, percent: totalJiwa ? Math.round((totalAgeLansia / totalJiwa) * 1000) / 10 : 0, colorClass: "bg-emerald-500" },
   ];
 
   return (
@@ -65,7 +90,9 @@ export default function DataPendudukPage() {
             <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto text-emerald-600 border border-emerald-100">
               <Users className="w-5 h-5" />
             </div>
-            <span className="block text-3xl font-extrabold text-gray-800 tracking-tight">13.524</span>
+            <span className="block text-3xl font-extrabold text-gray-800 tracking-tight">
+              {totalJiwa.toLocaleString("id-ID")}
+            </span>
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Total Jiwa Terdata</span>
           </Card>
 
@@ -73,7 +100,9 @@ export default function DataPendudukPage() {
             <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto text-emerald-600 border border-emerald-100">
               <Home className="w-5 h-5" />
             </div>
-            <span className="block text-3xl font-extrabold text-gray-800 tracking-tight">4.120</span>
+            <span className="block text-3xl font-extrabold text-gray-800 tracking-tight">
+              {totalKK.toLocaleString("id-ID")}
+            </span>
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Kepala Keluarga (KK)</span>
           </Card>
 
@@ -81,7 +110,9 @@ export default function DataPendudukPage() {
             <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto text-emerald-600 border border-emerald-100">
               <Award className="w-5 h-5" />
             </div>
-            <span className="block text-3xl font-extrabold text-gray-800 tracking-tight">9.420</span>
+            <span className="block text-3xl font-extrabold text-gray-800 tracking-tight">
+              {totalDPT.toLocaleString("id-ID")}
+            </span>
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Wajib Pilih (DPT)</span>
           </Card>
 
@@ -135,24 +166,24 @@ export default function DataPendudukPage() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="font-bold text-gray-800">Laki-laki</span>
-                <span className="font-bold text-gray-900">50.6%</span>
+                <span className="font-bold text-gray-900">{percentLaki}%</span>
               </div>
               <div className="w-full bg-gray-50 border border-gray-100 rounded-full h-4 overflow-hidden">
-                <div className="bg-emerald-600 h-4 rounded-full" style={{ width: "50.6%" }} />
+                <div className="bg-emerald-600 h-4 rounded-full" style={{ width: `${percentLaki}%` }} />
               </div>
-              <span className="block text-xs text-gray-400 font-medium">Total: 6.840 jiwa</span>
+              <span className="block text-xs text-gray-400 font-medium">Total: {totalLaki.toLocaleString("id-ID")} jiwa</span>
             </div>
 
             {/* Perempuan */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="font-bold text-gray-800">Perempuan</span>
-                <span className="font-bold text-gray-900">49.4%</span>
+                <span className="font-bold text-gray-900">{percentPerempuan}%</span>
               </div>
               <div className="w-full bg-gray-50 border border-gray-100 rounded-full h-4 overflow-hidden">
-                <div className="bg-teal-600 h-4 rounded-full" style={{ width: "49.4%" }} />
+                <div className="bg-teal-600 h-4 rounded-full" style={{ width: `${percentPerempuan}%` }} />
               </div>
-              <span className="block text-xs text-gray-400 font-medium">Total: 6.684 jiwa</span>
+              <span className="block text-xs text-gray-400 font-medium">Total: {totalPerempuan.toLocaleString("id-ID")} jiwa</span>
             </div>
           </div>
         </Card>

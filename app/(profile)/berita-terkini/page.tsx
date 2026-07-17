@@ -1,87 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Calendar, ChevronRight, Landmark, Tag } from "lucide-react";
 import Image from "next/image";
 import Input from "@/components/ui/Input";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-
-type NewsItem = {
-  id: number;
-  title: string;
-  date: string;
-  category: "Prioritas" | "Pertanian" | "Ekonomi" | "Kesehatan" | "Pemerintahan";
-  slug: string;
-  description: string;
-  content: string;
-  image: string;
-};
-
-const beritaList: NewsItem[] = [
-  {
-    id: 1,
-    title: "Identifikasi Masalah Persampahan & Rencana Perdes Lingkungan",
-    date: "14 Juli 2026",
-    category: "Prioritas",
-    slug: "masalah-persampahan-dusun-karajan",
-    description: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan dipicu warga luar desa. Program TPST oleh KSM dijadwalkan aktif kembali awal Juli menunggu perbaikan mesin guna merumuskan regulasi sanksi tegas.",
-    content: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan (jalur utama Pasar Dengklok) dipicu warga luar desa. Program TPST oleh KSM dijadwalkan aktif kembali awal Juli menunggu perbaikan mesin guna merumuskan regulasi sanksi tegas.",
-    image: "/images/galeri-rapat.png"
-  },
-  {
-    id: 2,
-    title: "Potensi Pertanian Padi & Mitigasi Hama Sundep",
-    date: "05 Juli 2026",
-    category: "Pertanian",
-    slug: "potensi-pertanian-manajemen-air",
-    description: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep (padi kopong) serta tanah asam-asaman kini mulai diarahkan menuju edukasi Pertanian Modern bersama mahasiswa.",
-    content: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep (padi kopong) serta tanah asam-asaman kini mulai diarahkan menuju edukasi Pertanian Modern bersama mahasiswa.",
-    image: "/images/galeri-pertanian.png"
-  },
-  {
-    id: 3,
-    title: "Strategi Penguatan Kelompok Dagang Resmi UMKM Desa",
-    date: "28 Juni 2026",
-    category: "Ekonomi",
-    slug: "penguatan-naungan-umkm-lokal",
-    description: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi naungan resmi guna mengatasi kendala sistem titip jual produsen ke pedagang.",
-    content: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi naungan resmi guna mengatasi kendala sistem titip jual produsen ke pedagang.",
-    image: "/images/galeri-umkm.png"
-  },
-  {
-    id: 4,
-    title: "Pemeriksaan Rutin Posyandu Mawar Dusun Campea",
-    date: "15 Juni 2026",
-    category: "Kesehatan",
-    slug: "pemeriksaan-rutin-posyandu-campea",
-    description: "Layanan rutin bulanan pemantauan tumbuh kembang balita, imunisasi dasar, serta penyuluhan pemenuhan gizi seimbang diselenggarakan serentak di Posyandu Mawar Dusun Campea untuk menekan angka stunting.",
-    content: "Layanan rutin bulanan pemantauan tumbuh kembang balita, imunisasi dasar, serta penyuluhan pemenuhan gizi seimbang diselenggarakan serempak di Posyandu Mawar Dusun Campea untuk menekan angka stunting.",
-    image: "/images/background.webp"
-  },
-  {
-    id: 5,
-    title: "Penyaluran BLT Dana Desa Tahap II Tahun Anggaran 2026",
-    date: "10 Juni 2026",
-    category: "Pemerintahan",
-    slug: "penyaluran-blt-tahap-dua-desa",
-    description: "Pemerintah Desa Kampungsawah menyalurkan Bantuan Langsung Tunai (BLT) bersumber dari Dana Desa tahap II secara transparan kepada keluarga penerima manfaat prasejahtera yang terdata di sistem kependudukan.",
-    content: "Pemerintah Desa Kampungsawah menyalurkan Bantuan Langsung Tunai (BLT) bersumber dari Dana Desa tahap II secara transparan kepada keluarga penerima manfaat prasejahtera yang terdata di sistem kependudukan.",
-    image: "/images/background.webp"
-  },
-];
+import { useNewsList, NewsItem } from "@/lib/newsService";
 
 const categories = ["Semua", "Prioritas", "Pertanian", "Ekonomi", "Kesehatan", "Pemerintahan"];
 
 export default function BeritaTerkiniPage() {
+  const { news } = useNewsList();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
-  const filteredNews = beritaList.filter((news) => {
-    const matchesSearch = news.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          news.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === "Semua" || news.category === activeCategory;
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const idParam = params.get("id");
+      if (idParam) {
+        const found = news.find((item) => item.id === parseInt(idParam));
+        if (found) {
+          setSelectedNews(found);
+        }
+      }
+    }
+  }, [news]);
+
+  const filteredNews = news.filter((item) => {
+    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          item.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === "Semua" || item.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 

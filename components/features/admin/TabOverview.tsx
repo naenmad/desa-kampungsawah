@@ -3,6 +3,8 @@
 import { Newspaper, Users, FileText, MessageSquare, ArrowRight, Settings, ShieldCheck, Mail, MapPin, Phone } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { useContactInfo } from "@/lib/contactService";
+import { getPopulationData } from "@/lib/populationService";
+import { getNews } from "@/lib/newsService";
 
 interface TabOverviewProps {
   onNavigate: (tab: any) => void;
@@ -10,6 +12,11 @@ interface TabOverviewProps {
 
 export default function TabOverview({ onNavigate }: TabOverviewProps) {
   const contact = useContactInfo();
+
+  // Dynamic statistics
+  const popData = getPopulationData();
+  const totalJiwa = Object.values(popData).reduce((sum, d) => sum + d.laki + d.perempuan, 0);
+  const totalNews = getNews().length;
 
   return (
     <div className="space-y-6">
@@ -38,7 +45,7 @@ export default function TabOverview({ onNavigate }: TabOverviewProps) {
           </div>
           <div>
             <span className="text-[10px] font-bold text-slate-400 uppercase block">Data Penduduk</span>
-            <span className="text-lg font-black text-slate-800">3.486 Jiwa</span>
+            <span className="text-lg font-black text-slate-800">{totalJiwa.toLocaleString("id-ID")} Jiwa</span>
           </div>
         </Card>
 
@@ -48,7 +55,7 @@ export default function TabOverview({ onNavigate }: TabOverviewProps) {
           </div>
           <div>
             <span className="text-[10px] font-bold text-slate-400 uppercase block">Kabar Desa</span>
-            <span className="text-lg font-black text-slate-800">5 Artikel</span>
+            <span className="text-lg font-black text-slate-800">{totalNews} Artikel</span>
           </div>
         </Card>
 
