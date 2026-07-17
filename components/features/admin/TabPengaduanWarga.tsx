@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, CheckCircle2, Clock, Eye, Search, AlertTriangle, UserCheck, ShieldAlert, X, MessageSquare } from "lucide-react";
 import Card from "@/components/ui/Card";
+import { apiFetch } from "@/lib/apiClient";
 
 type ComplaintStatus = "diterima" | "verifikasi" | "proses" | "selesai";
 
@@ -63,7 +64,8 @@ const initialComplaints: Complaint[] = [
 ];
 
 export default function TabPengaduanWarga() {
-  const [complaints, setComplaints] = useState<Complaint[]>(initialComplaints);
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Complaint | null>(null);
 
   // Search & Filter States
@@ -74,22 +76,55 @@ export default function TabPengaduanWarga() {
   const [modalStatus, setModalStatus] = useState<ComplaintStatus>("diterima");
   const [modalResponseNote, setModalResponseNote] = useState("");
 
+  const fetchComplaints = async () => {
+    try {
+      const data = await apiFetch("/complaints");
+      const mapped = data.map((item: any) => ({
+        id: `ADU-${item.id}`,
+        category: item.category || "Aspirasi & Laporan Lainnya",
+        title: item.judul,
+        description: item.detail,
+        dusun: item.dusun,
+        reporter: item.anonymous ? "Anonim" : (item.reporter_name || "Warga Desa"),
+        whatsapp: item.whatsapp || undefined,
+        isAnonymous: Boolean(item.anonymous),
+        date: new Date(item.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        status: item.status as ComplaintStatus,
+        responseNote: item.admin_note || undefined,
+      }));
+      setComplaints(mapped);
+    } catch (e) {
+      // Ignore
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
   const handleStartVerifikasi = (item: Complaint) => {
     setSelectedItem(item);
     setModalStatus(item.status);
     setModalResponseNote(item.responseNote || "");
   };
 
-  const handleSaveTindakLanjut = (e: React.FormEvent) => {
+  const handleSaveTindakLanjut = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedItem) return;
 
-    setComplaints(complaints.map((c) =>
-      c.id === selectedItem.id
-        ? { ...c, status: modalStatus, responseNote: modalResponseNote }
-        : c
-    ));
-    setSelectedItem(null);
+    const dbId = selectedItem.id.replace("ADU-", "");
+    try {
+      await apiFetch(`/complaints/${dbId}/status`, {
+        method: "PUT",
+        body: JSON.stringify({ status: modalStatus, adminNote: modalResponseNote }),
+      });
+      fetchComplaints();
+      setSelectedItem(null);
+    } catch (err: any) {
+      alert(err.message || "Gagal memperbarui status pengaduan.");
+    }
   };
 
   const getStatusBadge = (status: ComplaintStatus) => {

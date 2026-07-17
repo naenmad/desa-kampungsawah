@@ -5,14 +5,43 @@ import { MapPin, Phone, Mail, Clock, Send, CheckCircle, Landmark } from "lucide-
 import Card from "@/components/ui/Card";
 import { Input, TextArea } from "@/components/ui/Input";
 import { useContactInfo } from "@/lib/contactService";
+import { apiFetch } from "@/lib/apiClient";
 
 export default function KontakPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const contact = useContactInfo();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form states
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
+    if (!name || !email || !phone || !subject || !message) return;
+    setIsSubmitting(true);
+
+    try {
+      await apiFetch("/inbox", {
+        method: "POST",
+        body: JSON.stringify({ name, email, phone, subject, message }),
+      });
+      setFormSubmitted(true);
+      
+      // Reset form
+      setName("");
+      setEmail("");
+      setPhone("");
+      setSubject("");
+      setMessage("");
+    } catch (err: any) {
+      alert(err.message || "Gagal mengirim pesan.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,6 +148,8 @@ export default function KontakPage() {
                     label="Nama Lengkap"
                     type="text"
                     required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Masukkan nama lengkap Anda"
                   />
 
@@ -127,12 +158,16 @@ export default function KontakPage() {
                       label="Alamat Email"
                       type="email"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="nama@email.com"
                     />
                     <Input
                       label="No. WhatsApp / Telepon"
                       type="tel"
                       required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       placeholder="0812xxxxxxxx"
                     />
                   </div>
@@ -141,6 +176,8 @@ export default function KontakPage() {
                     label="Subjek Hubungi"
                     type="text"
                     required
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
                     placeholder="Contoh: Kemitraan UMKM Konveksi Dompet"
                   />
 
@@ -148,6 +185,8 @@ export default function KontakPage() {
                     label="Isi Pesan Anda"
                     required
                     rows={5}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tuliskan secara detail pesan atau pertanyaan Anda di sini..."
                   />
                 </div>

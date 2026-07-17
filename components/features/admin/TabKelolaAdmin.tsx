@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Trash2, Edit, X, CheckCircle2, User } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input, { Select } from "@/components/ui/Input";
+import { apiFetch } from "@/lib/apiClient";
 
 type AdminUser = {
   id: number;
@@ -13,47 +14,78 @@ type AdminUser = {
 };
 
 export default function TabKelolaAdmin() {
-  const [admins, setAdmins] = useState<AdminUser[]>([
-    { id: 1, name: "Super Admin", email: "admin@kampungsawah.id", role: "Administrator Utama" },
-    { id: 2, name: "Asep Johan", email: "asepjohan@gmail.com", role: "Staf Pelayanan Kasi" },
-  ]);
+  const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   
   const [adminName, setAdminName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
   const [adminRole, setAdminRole] = useState("Staf Pelayanan Kasi");
   const [isSaved, setIsSaved] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchAdmins = async () => {
+    try {
+      const data = await apiFetch("/admins");
+      const mapped = data.map((user: any) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.email === "admin@kampungsawah.id" ? "Administrator Utama" : "Staf Pelayanan Kasi",
+      }));
+      setAdmins(mapped);
+    } catch (e) {
+      // Ignore
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdmins();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!adminName || !adminEmail) return;
 
-    if (editingId !== null) {
-      // Edit Mode
-      setAdmins(admins.map((admin) =>
-        admin.id === editingId
-          ? { ...admin, name: adminName, email: adminEmail, role: adminRole }
-          : admin
-      ));
-      setEditingId(null);
-      setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 2000);
-    } else {
-      // Add Mode
-      const newItem = {
-        id: Date.now(),
-        name: adminName,
-        email: adminEmail,
-        role: adminRole
-      };
-      setAdmins([...admins, newItem]);
-    }
+    try {
+      if (editingId !== null) {
+        // Edit Mode
+        await apiFetch(`/admins/${editingId}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            name: adminName,
+            email: adminEmail,
+            password: adminPassword || undefined,
+          }),
+        });
+        setEditingId(null);
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 2000);
+      } else {
+        // Add Mode (requires a password, default to admin123 if blank)
+        await apiFetch("/admins", {
+          method: "POST",
+          body: JSON.stringify({
+            name: adminName,
+            email: adminEmail,
+            password: adminPassword || "admin123",
+          }),
+        });
+      }
 
-    // Reset Form
-    setAdminName("");
-    setAdminEmail("");
-    setAdminRole("Staf Pelayanan Kasi");
+      fetchAdmins();
+
+      // Reset Form
+      setAdminName("");
+      setAdminEmail("");
+      setAdminPassword("");
+      setAdminRole("Staf Pelayanan Kasi");
+    } catch (err: any) {
+      alert(err.message || "Gagal menyimpan administrator.");
+    }
   };
 
   const handleStartEdit = (item: AdminUser) => {
@@ -61,6 +93,7 @@ export default function TabKelolaAdmin() {
     setAdminName(item.name);
     setAdminEmail(item.email);
     setAdminRole(item.role);
+    setAdminPassword(""); // leave blank unless changing it
     window.scrollTo({ top: 120, behavior: "smooth" });
   };
 
@@ -68,19 +101,26 @@ export default function TabKelolaAdmin() {
     setEditingId(null);
     setAdminName("");
     setAdminEmail("");
+    setAdminPassword("");
     setAdminRole("Staf Pelayanan Kasi");
   };
 
-  const handleDeleteAdmin = (id: number) => {
-    if (id === 1) {
+  const handleDeleteAdmin = async (id: number) => {
+    const target = admins.find(a => a.id === id);
+    if (target && target.email === "admin@kampungsawah.id") {
       alert("Akun Super Admin utama tidak dapat dihapus demi keamanan sistem.");
       return;
     }
 
     if (confirm("Apakah Anda yakin ingin menghapus akun administrator ini? Akses kelola akan dicabut secara permanen.")) {
-      setAdmins(admins.filter((admin) => admin.id !== id));
-      if (editingId === id) {
-        handleCancelEdit();
+      try {
+        await apiFetch(`/admins/${id}`, { method: "DELETE" });
+        fetchAdmins();
+        if (editingId === id) {
+          handleCancelEdit();
+        }
+      } catch (err: any) {
+        alert(err.message || "Gagal menghapus administrator.");
       }
     }
   };
@@ -123,7 +163,7 @@ export default function TabKelolaAdmin() {
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           <div>
             <Input
               label="Nama Lengkap Admin"
@@ -142,6 +182,17 @@ export default function TabKelolaAdmin() {
               value={adminEmail}
               onChange={(e) => setAdminEmail(e.target.value)}
               placeholder="asep@mail.com"
+            />
+          </div>
+
+          <div>
+            <Input
+              label={editingId !== null ? "Kata Sandi Baru" : "Kata Sandi"}
+              type="password"
+              required={editingId === null}
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              placeholder={editingId !== null ? "Kosongkan jika tetap" : "Min. 6 Karakter"}
             />
           </div>
           

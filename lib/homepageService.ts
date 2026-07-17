@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { apiFetch } from "./apiClient";
 
 export type HomepageConfig = {
   heroTitle: string;
@@ -22,40 +23,34 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageConfig = {
   headImage: ""
 };
 
-export function getHomepageConfig(): HomepageConfig {
-  if (typeof window === "undefined") {
-    return DEFAULT_HOMEPAGE_CONFIG;
-  }
-  const stored = localStorage.getItem("desa_homepage_config");
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      return DEFAULT_HOMEPAGE_CONFIG;
-    }
-  }
-  return DEFAULT_HOMEPAGE_CONFIG;
-}
-
-export function saveHomepageConfig(config: HomepageConfig) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("desa_homepage_config", JSON.stringify(config));
-  window.dispatchEvent(new Event("storage"));
+export async function saveHomepageConfig(config: HomepageConfig) {
+  const result = await apiFetch("/homepage", {
+    method: "PUT",
+    body: JSON.stringify(config),
+  });
+  window.dispatchEvent(new Event("homepage-updated"));
+  return result;
 }
 
 export function useHomepageConfig() {
   const [config, setConfig] = useState<HomepageConfig>(DEFAULT_HOMEPAGE_CONFIG);
 
   useEffect(() => {
-    setConfig(getHomepageConfig());
-
-    const handleStorageChange = () => {
-      setConfig(getHomepageConfig());
+    const fetchConfig = () => {
+      apiFetch("/homepage")
+        .then((data) => {
+          if (data) setConfig(data);
+        })
+        .catch(() => {
+          // Fallback
+        });
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    fetchConfig();
+
+    window.addEventListener("homepage-updated", fetchConfig);
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("homepage-updated", fetchConfig);
     };
   }, []);
 

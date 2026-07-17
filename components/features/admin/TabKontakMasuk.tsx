@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Mail, Phone, Clock, Search, Trash2, Eye, MailOpen, Check, X, CheckCircle2, Settings } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input, { TextArea } from "@/components/ui/Input";
-import { getContactInfo, saveContactInfo, ContactData } from "@/lib/contactService";
+import { saveContactInfo, ContactData } from "@/lib/contactService";
+import { apiFetch } from "@/lib/apiClient";
 
 type ContactMessage = {
   id: number;
@@ -57,32 +58,68 @@ export default function TabKontakMasuk() {
   
   const [isSaved, setIsSaved] = useState(false);
 
+  const fetchMessages = async () => {
+    try {
+      const data = await apiFetch("/inbox");
+      const mapped = data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        whatsapp: item.phone,
+        subject: item.subject,
+        message: item.message,
+        date: new Date(item.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        isRead: Boolean(item.is_read),
+      }));
+      setMessages(mapped);
+    } catch (e) {
+      // Ignore
+    }
+  };
+
   useEffect(() => {
-    // Load contact info on init
-    const contact = getContactInfo();
-    setAddress(contact.address);
-    setPhone(contact.phone);
-    setEmail(contact.email);
-    setHours(contact.hours);
+    // Load contact info on init from API
+    apiFetch("/contact")
+      .then((contact) => {
+        if (contact) {
+          setAddress(contact.address);
+          setPhone(contact.phone);
+          setEmail(contact.email);
+          setHours(contact.hours);
+        }
+      })
+      .catch(() => {});
+
+    fetchMessages();
   }, []);
 
-  const handleDeleteMessage = (id: number) => {
+  const handleDeleteMessage = async (id: number) => {
     if (confirm("Apakah Anda yakin ingin menghapus pesan masuk ini?")) {
-      setMessages(messages.filter((m) => m.id !== id));
-      if (selectedMessage?.id === id) {
-        setSelectedMessage(null);
+      try {
+        await apiFetch(`/inbox/${id}`, { method: "DELETE" });
+        fetchMessages();
+        if (selectedMessage?.id === id) {
+          setSelectedMessage(null);
+        }
+      } catch (err: any) {
+        alert(err.message || "Gagal menghapus pesan.");
       }
     }
   };
 
-  const handleMarkAsRead = (id: number) => {
-    setMessages(messages.map((m) => m.id === id ? { ...m, isRead: true } : m));
-    if (selectedMessage?.id === id) {
-      setSelectedMessage({ ...selectedMessage, isRead: true });
+  const handleMarkAsRead = async (id: number) => {
+    try {
+      await apiFetch(`/inbox/${id}/read`, { method: "PUT" });
+      fetchMessages();
+      if (selectedMessage?.id === id) {
+        setSelectedMessage({ ...selectedMessage, isRead: true });
+      }
+    } catch (e) {
+      // Ignore
     }
   };
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     const updatedContact: ContactData = {
       address,
@@ -90,9 +127,13 @@ export default function TabKontakMasuk() {
       email,
       hours,
     };
-    saveContactInfo(updatedContact);
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
+    try {
+      await saveContactInfo(updatedContact);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
+    } catch (err: any) {
+      alert(err.message || "Gagal menyimpan pengaturan.");
+    }
   };
 
   // WhatsApp Helper Link

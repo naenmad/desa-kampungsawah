@@ -6,11 +6,21 @@ import { FileText, ShieldCheck, ArrowRight, User, CreditCard, HelpCircle, AlertC
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { Input, TextArea, Select } from "@/components/ui/Input";
+import { apiFetch } from "@/lib/apiClient";
 
 export default function AdministrasiPelayananPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [tokenCode, setTokenCode] = useState("");
   const [selectedSurat, setSelectedSurat] = useState("");
+  
+  // Form input states
+  const [nama, setNama] = useState("");
+  const [nik, setNik] = useState("");
+  const [dusun, setDusun] = useState("");
+  const [rt, setRt] = useState("");
+  const [rw, setRw] = useState("");
+  const [alasan, setAlasan] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const jenisSurat = [
     {
@@ -41,12 +51,32 @@ export default function AdministrasiPelayananPage() {
 
   const dusunList = ["Pasar", "Puloharapan", "Campea", "Karajan"];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulasi pembuatan token acak untuk tracking surat
-    const randomToken = "KSW-" + Math.floor(100000 + Math.random() * 900000);
-    setTokenCode(randomToken);
-    setFormSubmitted(true);
+    if (!nik || !dusun || !rt || !rw || !alasan) return;
+    setIsSubmitting(true);
+
+    try {
+      const result = await apiFetch("/letters", {
+        method: "POST",
+        body: JSON.stringify({
+          nik,
+          dusun,
+          rt,
+          rw,
+          alasan: `[${selectedSurat.toUpperCase()}] Nama: ${nama}. Alasan: ${alasan}`,
+        }),
+      });
+
+      // Generate tracking token
+      const trackingToken = `KSW-${result.id || Math.floor(100000 + Math.random() * 900000)}`;
+      setTokenCode(trackingToken);
+      setFormSubmitted(true);
+    } catch (err: any) {
+      alert(err.message || "Gagal mengirim permohonan surat.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const currentSuratDetail = jenisSurat.find(s => s.id === selectedSurat);
@@ -128,11 +158,13 @@ export default function AdministrasiPelayananPage() {
                     </Select>
                   </div>
 
-                  {/* Nama Lengkap */}
+                   {/* Nama Lengkap */}
                   <Input
                     label="Nama Lengkap"
                     type="text"
                     required
+                    value={nama}
+                    onChange={(e) => setNama(e.target.value)}
                     placeholder="Masukkan nama sesuai KTP"
                     icon={<User className="h-4 w-4 text-gray-400" />}
                   />
@@ -143,12 +175,19 @@ export default function AdministrasiPelayananPage() {
                     type="text"
                     required
                     maxLength={16}
+                    value={nik}
+                    onChange={(e) => setNik(e.target.value)}
                     placeholder="16 digit NIK Anda"
                     icon={<CreditCard className="h-4 w-4 text-gray-400" />}
                   />
 
                   {/* Wilayah Dusun */}
-                  <Select label="Wilayah Dusun asal tinggal" required>
+                  <Select
+                    label="Wilayah Dusun asal tinggal"
+                    required
+                    value={dusun}
+                    onChange={(e) => setDusun(e.target.value)}
+                  >
                     <option value="">-- Pilih Dusun Asal --</option>
                     {dusunList.map((dusun, idx) => (
                       <option key={idx} value={dusun.toLowerCase()}>Dusun {dusun}</option>
@@ -163,6 +202,8 @@ export default function AdministrasiPelayananPage() {
                       required
                       min={1}
                       max={12}
+                      value={rt}
+                      onChange={(e) => setRt(e.target.value)}
                       placeholder="1 - 12"
                       className="text-center"
                     />
@@ -172,6 +213,8 @@ export default function AdministrasiPelayananPage() {
                       required
                       min={1}
                       max={4}
+                      value={rw}
+                      onChange={(e) => setRw(e.target.value)}
                       placeholder="1 - 4"
                       className="text-center"
                     />
@@ -183,6 +226,8 @@ export default function AdministrasiPelayananPage() {
                       label="Alasan / Keperluan Keterangan Surat"
                       required
                       rows={4}
+                      value={alasan}
+                      onChange={(e) => setAlasan(e.target.value)}
                       placeholder="Contoh: Digunakan sebagai syarat pengajuan modal usaha UMKM konveksi dompet."
                     />
                   </div>

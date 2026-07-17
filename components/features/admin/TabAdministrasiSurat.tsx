@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, CheckCircle2, XCircle, Eye, Search, AlertCircle, FileText, Info, ShieldCheck, X } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
+import { apiFetch } from "@/lib/apiClient";
 
 type LetterRequest = {
   id: string;
@@ -59,7 +60,8 @@ const initialLetters: LetterRequest[] = [
 ];
 
 export default function TabAdministrasiSurat() {
-  const [letters, setLetters] = useState<LetterRequest[]>(initialLetters);
+  const [letters, setLetters] = useState<LetterRequest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<LetterRequest | null>(null);
   
   // Search & Filter States
@@ -70,23 +72,83 @@ export default function TabAdministrasiSurat() {
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectReasonText, setRejectReasonText] = useState("");
 
-  const handleApproveLetter = (id: string) => {
-    if (confirm("Setujui berkas permohonan surat ini?")) {
-      setLetters(letters.map((l) => (l.id === id ? { ...l, status: "Disetujui" as const } : l)));
-      setSelectedItem(null);
+  const fetchLetters = async () => {
+    try {
+      const data = await apiFetch("/letters");
+      const mapped = data.map((item: any) => {
+        let type = "Surat Keterangan Umum";
+        let name = "Warga Desa";
+        let reason = item.alasan;
+
+        const match = item.alasan.match(/^\[(.*?)\] Nama: (.*?)\. Alasan: (.*)$/);
+        if (match) {
+          type = match[1] === "SKU" ? "Surat Keterangan Usaha (SKU)" :
+                 match[1] === "SKTM" ? "Surat Keterangan Tidak Mampu (SKTM)" :
+                 match[1] === "DOMISILI" ? "Surat Keterangan Domisili Penduduk" :
+                 match[1] === "SKCK" ? "Surat Pengantar SKCK" : "Layanan Surat";
+          name = match[2];
+          reason = match[3];
+        }
+
+        return {
+          id: String(item.id),
+          name,
+          nik: item.nik,
+          type,
+          dusun: item.dusun,
+          rt: item.rt,
+          rw: item.rw,
+          reason,
+          date: new Date(item.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+          status: item.status === "approved" ? "Disetujui" : item.status === "rejected" ? "Ditolak" : "Pending",
+          rejectReason: item.reject_reason || undefined,
+        };
+      });
+      setLetters(mapped);
+    } catch (e) {
+      // Ignore
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleRejectLetter = (e: React.FormEvent, id: string) => {
+  useEffect(() => {
+    fetchLetters();
+  }, []);
+
+  const handleApproveLetter = async (id: string) => {
+    if (confirm("Setujui berkas permohonan surat ini?")) {
+      try {
+        await apiFetch(`/letters/${id}/status`, {
+          method: "PUT",
+          body: JSON.stringify({ status: "approved" }),
+        });
+        fetchLetters();
+        setSelectedItem(null);
+      } catch (err: any) {
+        alert(err.message || "Gagal menyetujui permohonan.");
+      }
+    }
+  };
+
+  const handleRejectLetter = async (e: React.FormEvent, id: string) => {
     e.preventDefault();
     if (!rejectReasonText) {
       alert("Silakan masukkan alasan penolakan berkas.");
       return;
     }
-    setLetters(letters.map((l) => (l.id === id ? { ...l, status: "Ditolak" as const, rejectReason: rejectReasonText } : l)));
-    setRejectReasonText("");
-    setShowRejectForm(false);
-    setSelectedItem(null);
+    try {
+      await apiFetch(`/letters/${id}/status`, {
+        method: "PUT",
+        body: JSON.stringify({ status: "rejected", rejectReason: rejectReasonText }),
+      });
+      fetchLetters();
+      setRejectReasonText("");
+      setShowRejectForm(false);
+      setSelectedItem(null);
+    } catch (err: any) {
+      alert(err.message || "Gagal menolak permohonan.");
+    }
   };
 
   const getRequirements = (type: string) => {

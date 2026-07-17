@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { apiFetch } from "./apiClient";
 
 export type NewsItem = {
   id: number;
@@ -21,63 +22,52 @@ export const DEFAULT_NEWS: NewsItem[] = [
     description: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan dipicu warga luar desa.",
     content: "Penanganan sampah mandiri dengan dibakar masih mendominasi akibat ketiadaan TPS resmi. Tumpukan sampah di Dusun Karajan (jalur utama Pasar Dengklok) dipicu warga luar desa. Program TPST oleh KSM dijadwalkan aktif kembali awal Juli menunggu perbaikan mesin guna merumuskan regulasi sanksi tegas.",
     image: "/images/galeri-rapat.png"
-  },
-  {
-    id: 2,
-    title: "Potensi Pertanian Padi & Mitigasi Hama Sundep",
-    category: "Pertanian",
-    date: "05 Juli 2026",
-    description: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep.",
-    content: "Kelompok tani aktif menjalankan pola 2 kali panen per tahun dengan komoditas padi. Pengendalian hama tikus, ngengat, dan penyakit sundep (padi kopong) serta tanah asam-asaman kini mulai diarahkan menuju edukasi Pertanian Modern bersama mahasiswa.",
-    image: "/images/galeri-pertanian.png"
-  },
-  {
-    id: 3,
-    title: "Strategi Penguatan Kelompok Dagang Resmi UMKM Desa",
-    category: "Ekonomi",
-    date: "28 Juni 2026",
-    description: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi.",
-    content: "Sektor konveksi dompet daring dan kuliner kue basah pagi hari menjadi motor ekonomi utama desa. Pemerintah desa mengidentifikasi perlunya penguatan organisasi naungan resmi guna mengatasi kendala sistem titip jual produsen ke pedagang.",
-    image: "/images/galeri-umkm.png"
   }
 ];
 
-export function getNews(): NewsItem[] {
-  if (typeof window === "undefined") {
-    return DEFAULT_NEWS;
-  }
-  const stored = localStorage.getItem("desa_news_list");
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      return DEFAULT_NEWS;
-    }
-  }
-  return DEFAULT_NEWS;
-}
-
-export function saveNews(newsList: NewsItem[]) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("desa_news_list", JSON.stringify(newsList));
-  window.dispatchEvent(new Event("storage"));
-}
-
 export function useNewsList() {
   const [news, setNews] = useState<NewsItem[]>(DEFAULT_NEWS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchNews = async () => {
+    try {
+      const data = await apiFetch("/news");
+      if (data) setNews(data);
+    } catch (e) {
+      // Fallback
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setNews(getNews());
-
-    const handleStorageChange = () => {
-      setNews(getNews());
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
+    fetchNews();
   }, []);
 
-  return { news, setNews: (updated: NewsItem[]) => { setNews(updated); saveNews(updated); } };
+  const addNews = async (item: Omit<NewsItem, "id">) => {
+    const result = await apiFetch("/news", {
+      method: "POST",
+      body: JSON.stringify(item),
+    });
+    fetchNews();
+    return result;
+  };
+
+  const updateNews = async (id: number, item: Omit<NewsItem, "id">) => {
+    const result = await apiFetch(`/news/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(item),
+    });
+    fetchNews();
+    return result;
+  };
+
+  const deleteNews = async (id: number) => {
+    await apiFetch(`/news/${id}`, {
+      method: "DELETE",
+    });
+    fetchNews();
+  };
+
+  return { news, isLoading, addNews, updateNews, deleteNews, refreshNews: fetchNews };
 }

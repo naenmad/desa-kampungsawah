@@ -3,8 +3,8 @@
 import { Newspaper, Users, FileText, MessageSquare, ArrowRight, Settings, ShieldCheck, Mail, MapPin, Phone } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { useContactInfo } from "@/lib/contactService";
-import { getPopulationData } from "@/lib/populationService";
-import { getNews } from "@/lib/newsService";
+import { usePopulationData } from "@/lib/populationService";
+import { useNewsList } from "@/lib/newsService";
 
 interface TabOverviewProps {
   onNavigate: (tab: any) => void;
@@ -12,11 +12,12 @@ interface TabOverviewProps {
 
 export default function TabOverview({ onNavigate }: TabOverviewProps) {
   const contact = useContactInfo();
+  const { data: popData } = usePopulationData();
+  const { news } = useNewsList();
 
   // Dynamic statistics
-  const popData = getPopulationData();
   const totalJiwa = Object.values(popData).reduce((sum, d) => sum + d.laki + d.perempuan, 0);
-  const totalNews = getNews().length;
+  const totalNews = news.length;
 
   return (
     <div className="space-y-6">

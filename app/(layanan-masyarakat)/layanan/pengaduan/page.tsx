@@ -5,6 +5,7 @@ import { MessageSquare, Shield, Send, Search, CheckCircle, Clock, AlertTriangle,
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Input, TextArea, Select } from "@/components/ui/Input";
+import { apiFetch } from "@/lib/apiClient";
 
 type ComplaintStatus = "diterima" | "verifikasi" | "proses" | "selesai";
 
@@ -82,30 +83,71 @@ export default function PengaduanMasyarakatPage() {
 
   const dusunList = ["Pasar", "Puloharapan", "Campea", "Karajan"];
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const randomTicket = "ADU-" + Math.floor(100000 + Math.random() * 900000);
-    setCreatedTicketId(randomTicket);
-    setSubmitSuccess(true);
+    if (!title || !description || !dusun) return;
 
-    // Reset Form
-    setCategory("");
-    setTitle("");
-    setDescription("");
-    setDusun("");
-    setReporterName("");
-    setWhatsapp("");
-    setIsAnonymous(false);
+    try {
+      const result = await apiFetch("/complaints", {
+        method: "POST",
+        body: JSON.stringify({
+          judul: title,
+          detail: description,
+          dusun,
+          category,
+          anonymous: isAnonymous,
+          reporter_name: isAnonymous ? null : reporterName,
+          whatsapp: isAnonymous ? null : whatsapp,
+        }),
+      });
+
+      const randomTicket = `ADU-${result.id || Math.floor(100000 + Math.random() * 900000)}`;
+      setCreatedTicketId(randomTicket);
+      setSubmitSuccess(true);
+
+      // Reset Form
+      setCategory("");
+      setTitle("");
+      setDescription("");
+      setDusun("");
+      setReporterName("");
+      setWhatsapp("");
+      setIsAnonymous(false);
+    } catch (err: any) {
+      alert(err.message || "Gagal mengirim pengaduan.");
+    }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSearchError(false);
+    setSearchResult(null);
+    
     const cleanQuery = searchQuery.trim().toUpperCase();
-    if (mockTickets[cleanQuery]) {
-      setSearchResult(mockTickets[cleanQuery]);
-      setSearchError(false);
-    } else {
-      setSearchResult(null);
+    const id = cleanQuery.startsWith("ADU-") ? cleanQuery.replace("ADU-", "") : cleanQuery;
+
+    if (!id || isNaN(Number(id))) {
+      setSearchError(true);
+      return;
+    }
+
+    try {
+      const data = await apiFetch(`/complaints/${id}`);
+      if (data) {
+        setSearchResult({
+          id: `ADU-${data.id}`,
+          category: data.category || "Aspirasi & Laporan Lainnya",
+          title: data.judul,
+          description: data.detail,
+          dusun: data.dusun,
+          date: new Date(data.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+          status: data.status as ComplaintStatus,
+          responseNote: data.admin_note || undefined,
+        });
+      } else {
+        setSearchError(true);
+      }
+    } catch (err) {
       setSearchError(true);
     }
   };

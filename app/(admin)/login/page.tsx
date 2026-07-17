@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ShieldAlert, ArrowRight, Loader2 } from "lucide-react";
 import Input from "@/components/ui/Input";
+import { apiFetch, setAuthToken } from "@/lib/apiClient";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -13,18 +14,27 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+    setIsLoading(true);
     
-    if (email === "admin@kampungsawah.id" && password === "admin123") {
-      setIsLoading(true);
-      // Simulasi loading autentikasi selama 1 detik
-      setTimeout(() => {
+    try {
+      const data = await apiFetch("/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (data && data.token) {
+        setAuthToken(data.token);
         router.push("/dashboard");
-      }, 1000);
-    } else {
-      setErrorMsg("Kredensial yang Anda masukkan salah. Gunakan detail uji coba di bawah.");
+      } else {
+        setErrorMsg("Gagal melakukan autentikasi.");
+        setIsLoading(false);
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Kredensial yang Anda masukkan salah.");
+      setIsLoading(false);
     }
   };
 

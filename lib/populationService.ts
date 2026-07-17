@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { apiFetch } from "./apiClient";
 
 export type DusunData = {
   laki: number;
@@ -71,40 +72,34 @@ export const DEFAULT_POPULATION: Record<string, DusunData> = {
   },
 };
 
-export function getPopulationData(): Record<string, DusunData> {
-  if (typeof window === "undefined") {
-    return DEFAULT_POPULATION;
-  }
-  const stored = localStorage.getItem("desa_population_data");
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      return DEFAULT_POPULATION;
-    }
-  }
-  return DEFAULT_POPULATION;
-}
-
-export function savePopulationData(data: Record<string, DusunData>) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("desa_population_data", JSON.stringify(data));
-  window.dispatchEvent(new Event("storage"));
+export async function savePopulationData(data: Record<string, DusunData>) {
+  const result = await apiFetch("/population", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+  window.dispatchEvent(new Event("population-updated"));
+  return result;
 }
 
 export function usePopulationData() {
   const [data, setData] = useState<Record<string, DusunData>>(DEFAULT_POPULATION);
 
   useEffect(() => {
-    setData(getPopulationData());
-
-    const handleStorageChange = () => {
-      setData(getPopulationData());
+    const fetchPopulation = () => {
+      apiFetch("/population")
+        .then((res) => {
+          if (res) setData(res);
+        })
+        .catch(() => {
+          // Fallback
+        });
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    fetchPopulation();
+
+    window.addEventListener("population-updated", fetchPopulation);
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("population-updated", fetchPopulation);
     };
   }, []);
 

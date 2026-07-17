@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { CheckCircle2, AlertCircle, Home, Users, Award, Landmark } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
-import { getPopulationData, savePopulationData } from "@/lib/populationService";
+import { usePopulationData } from "@/lib/populationService";
 
 type DusunData = {
   laki: number;
@@ -76,13 +76,16 @@ const initialData: Record<string, DusunData> = {
 };
 
 export default function TabDataPenduduk() {
+  const { data: apiData, setData: saveApiData } = usePopulationData();
   const [data, setData] = useState<Record<string, DusunData>>(initialData);
   const [activeDusun, setActiveDusun] = useState<"pasar" | "puloharapan" | "campea" | "karajan">("pasar");
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    setData(getPopulationData());
-  }, []);
+    if (apiData) {
+      setData(apiData);
+    }
+  }, [apiData]);
 
   // 1. hitung akumulasi global otomatis
   const totalPasar = data.pasar.laki + data.pasar.perempuan;
@@ -115,11 +118,15 @@ export default function TabDataPenduduk() {
     });
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    savePopulationData(data);
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
+    try {
+      await saveApiData(data);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
+    } catch (err: any) {
+      alert(err.message || "Gagal menyimpan data kependudukan.");
+    }
   };
 
   return (

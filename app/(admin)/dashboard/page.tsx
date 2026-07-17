@@ -25,6 +25,8 @@ import TabKontakMasuk from "@/components/features/admin/TabKontakMasuk";
 import TabKelolaAdmin from "@/components/features/admin/TabKelolaAdmin";
 import TabKelolaBeranda from "@/components/features/admin/TabKelolaBeranda";
 
+import { apiFetch, setAuthToken } from "@/lib/apiClient";
+
 type AdminTab =
   | "overview"
   | "kelola-beranda"
@@ -58,7 +60,13 @@ export default function AdminDashboardPage() {
     setSidebarOpen(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await apiFetch("/logout", { method: "POST" });
+    } catch (e) {
+      // Ignore if already token expired
+    }
+    setAuthToken(null);
     sessionStorage.removeItem("admin_active_tab");
     router.push("/login");
   };

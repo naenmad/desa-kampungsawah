@@ -8,7 +8,7 @@ import Input, { Select, TextArea } from "@/components/ui/Input";
 import { useNewsList } from "@/lib/newsService";
 
 export default function TabBeritaTerkini() {
-  const { news, setNews } = useNewsList();
+  const { news, addNews, updateNews, deleteNews } = useNewsList();
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newTitle, setNewTitle] = useState("");
@@ -33,42 +33,40 @@ export default function TabBeritaTerkini() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle || !newDesc || !newContent) return;
 
-    if (editingId !== null) {
-      setNews(news.map((item) =>
-        item.id === editingId
-          ? {
-              ...item,
-              title: newTitle,
-              category: newCat,
-              description: newDesc,
-              content: newContent,
-              image: newImage
-            }
-          : item
-      ));
-      setEditingId(null);
-    } else {
-      const newItem = {
-        id: Date.now(),
-        title: newTitle,
-        category: newCat,
-        date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
-        description: newDesc,
-        content: newContent,
-        image: newImage
-      };
-      setNews([newItem, ...news]);
-    }
+    try {
+      if (editingId !== null) {
+        await updateNews(editingId, {
+          title: newTitle,
+          category: newCat,
+          date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+          description: newDesc,
+          content: newContent,
+          image: newImage
+        });
+        setEditingId(null);
+      } else {
+        await addNews({
+          title: newTitle,
+          category: newCat,
+          date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+          description: newDesc,
+          content: newContent,
+          image: newImage
+        });
+      }
 
-    // Reset Form
-    setNewTitle("");
-    setNewDesc("");
-    setNewContent("");
-    setNewImage("/images/background.webp");
+      // Reset Form
+      setNewTitle("");
+      setNewDesc("");
+      setNewContent("");
+      setNewImage("/images/background.webp");
+    } catch (err: any) {
+      alert(err.message || "Gagal menyimpan berita.");
+    }
   };
 
   const handleStartEdit = (item: any) => {
@@ -88,11 +86,15 @@ export default function TabBeritaTerkini() {
     setNewImage("/images/background.webp");
   };
 
-  const handleDeleteNews = (id: number) => {
+  const handleDeleteNews = async (id: number) => {
     if (confirm("Apakah Anda yakin ingin menghapus berita ini?")) {
-      setNews(news.filter((n) => n.id !== id));
-      if (editingId === id) {
-        handleCancelEdit();
+      try {
+        await deleteNews(id);
+        if (editingId === id) {
+          handleCancelEdit();
+        }
+      } catch (err: any) {
+        alert(err.message || "Gagal menghapus berita.");
       }
     }
   };

@@ -4,15 +4,18 @@ import { useState, useEffect } from "react";
 import { CheckCircle2, Home, Landmark, Image as ImageIcon } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Input, { TextArea } from "@/components/ui/Input";
-import { getHomepageConfig, saveHomepageConfig, HomepageConfig } from "@/lib/homepageService";
+import { useHomepageConfig, HomepageConfig } from "@/lib/homepageService";
 
 export default function TabKelolaBeranda() {
+  const { config: apiConfig, setConfig: saveApiConfig } = useHomepageConfig();
   const [config, setConfig] = useState<HomepageConfig | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    setConfig(getHomepageConfig());
-  }, []);
+    if (apiConfig) {
+      setConfig(apiConfig);
+    }
+  }, [apiConfig]);
 
   const handleInputChange = (field: keyof HomepageConfig, value: string) => {
     if (!config) return;
@@ -43,16 +46,20 @@ export default function TabKelolaBeranda() {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!config) return;
-    saveHomepageConfig(config);
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
+    try {
+      await saveApiConfig(config);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
+    } catch (err: any) {
+      alert(err.message || "Gagal menyimpan perubahan.");
+    }
   };
 
   if (!config) {
-    return <p className="text-center text-xs text-slate-400 py-12">Memuat pengaturan beranda...</p>;
+    return <p className="text-center text-xs text-slate-400 py-12 font-sans">Memuat pengaturan beranda...</p>;
   }
 
   return (
