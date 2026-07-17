@@ -79,18 +79,22 @@ body:has(#admin-login-root) footer {
   display: none !important;
 }
 
-/* Kunci body dan main agar benar-benar full screen tanpa scroll bocor di admin */
+/* Kunci body, main, dan div layout agar benar-benar full screen tanpa scroll bocor di admin */
 body:has(#admin-dashboard-root),
-body:has(#admin-dashboard-root) > main {
+body:has(#admin-dashboard-root) > main,
+body:has(#admin-dashboard-root) > main > div {
   height: 100vh !important;
   height: 100dvh !important;
   overflow: hidden !important;
+  min-height: 0 !important;
   background-color: #f8fafc !important; /* bg-slate-50 */
 }
 
 body:has(#admin-login-root),
-body:has(#admin-login-root) > main {
+body:has(#admin-login-root) > main,
+body:has(#admin-login-root) > main > div {
   min-height: 100vh !important;
   min-height: 100dvh !important;
+  background-color: #f8fafc !important; /* Mencegah void hitam */
 }
 
